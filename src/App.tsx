@@ -1,42 +1,39 @@
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { create } from "zustand"
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { LoginPage } from './pages/public/LoginPage';
+import { RegisterPage } from './pages/public/RegisterPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { useAuthStore } from './store/authStore';
+import { useEffect } from 'react';
+import { DashboardPage } from './pages/portal/DashboardPage';
+import { NotFoundPage } from './pages/public/NotFoundPage';
 
-// Simple Zustand store
-interface CounterState {
-  count: number
-  increase: () => void
-}
+function App() {
+  const { isAuthenticated, getCurrentUser } = useAuthStore();
 
-const useCounterStore = create<CounterState>((set) => ({
-  count: 0,
-  increase: () => set((state) => ({ count: state.count + 1 })),
-}))
-
-export default function App() {
-  const { count, increase } = useCounterStore()
+  useEffect(() => {
+    if (isAuthenticated) {
+      getCurrentUser();
+    }
+  }, [isAuthenticated, getCurrentUser]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 space-y-6">
-      {/* Welcome Header */}
-      <h1 className="text-4xl font-bold text-center">
-        👋 Welcome to Tech Portal
-      </h1>
-      <p className="text-lg text-center text-gray-600 max-w-md">
-        Start here! Explore your projects, manage tasks, and track progress in one place.
-      </p>
-
-      {/* Start Button */}
-      <Button className="flex items-center gap-2" onClick={increase}>
-        <Plus className="h-4 w-4" /> Start Here
-      </Button>
-
-      {/* Interactive Counter */}
-      {count > 0 && (
-        <p className="text-lg text-blue-600">
-          You've clicked start {count} {count === 1 ? "time" : "times"}!
-        </p>
-      )}
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/login" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />
+        } />
+        <Route path="/register" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        } />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Router>
+  );
 }
+
+export default App;
