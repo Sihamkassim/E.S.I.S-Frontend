@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
 export const DashboardPage = () => {
@@ -11,6 +12,12 @@ export const DashboardPage = () => {
             <h1 className="text-xl font-semibold">Dashboard</h1>
             <div className="flex items-center space-x-4">
               <span className="text-gray-700">Welcome, {user?.email}</span>
+              <Link
+                to="/change-password"
+                className="block px-4 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+              >
+                Change password
+              </Link>
               <button
                 onClick={logout}
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"

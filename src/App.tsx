@@ -6,6 +6,11 @@ import { useAuthStore } from './store/authStore';
 import { useEffect } from 'react';
 import { DashboardPage } from './pages/portal/DashboardPage';
 import { NotFoundPage } from './pages/public/NotFoundPage';
+import { VerifyEmailPage } from './pages/public/OTPPage';
+import { ForgotPasswordPage } from './pages/public/ForgotPasswordPage';
+import { ChangePasswordPage } from './pages/portal/UpdatePassword';
+import { OAuthCallbackPage } from './pages/public/OAuthCallbackPage';
+import { ResendVerificationPage } from './pages/public/ResendVerificationPage';
 
 function App() {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -25,9 +30,26 @@ function App() {
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />
         } />
+        <Route path="/verify-email" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />
+        } />
+        <Route path="/forgot-password" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />
+        } />
+        <Route path="/oauth-callback" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />
+        } />
+        <Route path="/resend-verification" element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <ResendVerificationPage />
+        } />
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/change-password" element={
+          <ProtectedRoute>
+            <ChangePasswordPage />
           </ProtectedRoute>
         } />
         <Route path="*" element={<NotFoundPage />} />
