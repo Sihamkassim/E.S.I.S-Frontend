@@ -8,14 +8,17 @@ import { toast } from 'sonner';
 export const VerifyEmailPage = () => {
   const [otp, setOtp] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  
   const { 
     verifyOtp, 
-    resendOtp, // ADDED: Import resendOtp from store
+    resendOtp, // Make sure this exists in your store
     isLoading, 
     error, 
     clearError, 
     tempEmail 
   } = useAuthStore();
+  
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,17 +28,18 @@ export const VerifyEmailPage = () => {
   useEffect(() => {
     clearError();
     // Start resend cooldown timer
-    if (resendCooldown > 0 ) {
+    if (resendCooldown > 0) {
       const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
       return () => clearTimeout(timer);
     }
-  }, [resendCooldown]);
+  }, [resendCooldown, clearError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
     
     if (otp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP');
       return;
     }
 
@@ -50,15 +54,19 @@ export const VerifyEmailPage = () => {
   };
 
   const handleResendOtp = async () => {
-    if (resendCooldown > 0) return;
+    if (resendCooldown > 0 || !email) return;
+    
+    setIsResending(true);
+    clearError();
     
     try {
-      // CHANGED: Use resendOtp instead of checkEmail
       await resendOtp(email);
       setResendCooldown(60); // 60 seconds cooldown
       toast.success('New OTP sent to your email!');
     } catch (error) {
-      // Error handled by store - the store already shows toast error
+      // Error handled by store
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -100,13 +108,19 @@ export const VerifyEmailPage = () => {
               <button
                 type="button"
                 onClick={handleResendOtp}
-                disabled={resendCooldown > 0 || !email || isLoading}
-                className="text-sm text-primary hover:text-primary/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                disabled={resendCooldown > 0 || !email || isResending}
+                className="text-sm text-primary hover:text-primary/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mx-auto"
               >
-                {resendCooldown > 0 
-                  ? `Resend code in ${formatTime(resendCooldown)}` 
-                  : "Didn't receive the code? Resend"
-                }
+                {isResending ? (
+                  <>
+                    <Spinner size="sm" />
+                    Sending...
+                  </>
+                ) : resendCooldown > 0 ? (
+                  `Resend code in ${formatTime(resendCooldown)}`
+                ) : (
+                  "Didn't receive the code? Resend"
+                )}
               </button>
             </div>
           </div>

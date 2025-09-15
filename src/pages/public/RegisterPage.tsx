@@ -109,17 +109,17 @@ export const RegisterPage = () => {
               'Sign up'
             )}
           </button>
-          <div className="text-center text-sm mt-4">
+          {/* <div className="text-center text-sm mt-4">
             <span className="text-muted-foreground">
               Already registered but didn't verify?{' '}
             </span>
             <Link
-              to="/resend-verification"
+              to="/verify-email"
               className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               Resend verification email
             </Link>
-          </div>
+          </div> */}
           <div className="text-center text-sm">
             <span className="text-muted-foreground">
               Already have an account?{' '}

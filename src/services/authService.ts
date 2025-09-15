@@ -98,7 +98,7 @@ export const authService = {
     },
 
     resendOtp: async (email: string) => {
-        const response = await api.get(`/auth/resent-otp?email=${encodeURIComponent(email)}`);
+        const response = await api.post<{ message: string }>('/auth/resent-otp', { email });
         return response.data;
     },
 
@@ -106,7 +106,7 @@ export const authService = {
         try {
             const response = await api.post('/auth/google', {
                 ...data,
-                redirectUri: data.redirectUri || `${window.location.origin}/oauth-callback`
+                redirectUri: data.redirectUri || `${import.meta.env.VITE_FRONTEND_URL}/oauth-callback`
             });
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);

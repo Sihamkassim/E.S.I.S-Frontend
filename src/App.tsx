@@ -10,7 +10,6 @@ import { VerifyEmailPage } from './pages/public/OTPPage';
 import { ForgotPasswordPage } from './pages/public/ForgotPasswordPage';
 import { ChangePasswordPage } from './pages/portal/UpdatePassword';
 import { OAuthCallbackPage } from './pages/public/OAuthCallbackPage';
-import { ResendVerificationPage } from './pages/public/ResendVerificationPage';
 
 function App() {
   const { isAuthenticated, getCurrentUser } = useAuthStore();
@@ -38,9 +37,6 @@ function App() {
         } />
         <Route path="/oauth-callback" element={
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />
-        } />
-        <Route path="/resend-verification" element={
-          isAuthenticated ? <Navigate to="/dashboard" replace /> : <ResendVerificationPage />
         } />
         <Route path="/dashboard" element={
           <ProtectedRoute>
