@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { FormInput } from '../../components/ui/FormInput';
 import { Spinner } from '../../components/Spinner';
+import { OAuthButtons } from '@/components/OAuthButtons';
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const { register, isLoading, error, clearError, setTempEmail } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +41,8 @@ export const RegisterPage = () => {
 
     try {
       await register({ email, password });
-      navigate('/login');
+      setTempEmail(email); // Store email for OTP verification
+      navigate('/verify-email'); // Navigate to OTP verification
     } catch (error) {
       // Error is handled by the store
     }
@@ -78,7 +80,7 @@ export const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="new-password"
-              placeholder="Create a password"
+              placeholder="Create a password (min. 6 characters)"
             />
             
             <FormInput
@@ -99,7 +101,7 @@ export const RegisterPage = () => {
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoading ? (
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 <Spinner size="sm"/>
                 Creating account...
               </div>
@@ -107,7 +109,17 @@ export const RegisterPage = () => {
               'Sign up'
             )}
           </button>
-
+          {/* <div className="text-center text-sm mt-4">
+            <span className="text-muted-foreground">
+              Already registered but didn't verify?{' '}
+            </span>
+            <Link
+              to="/verify-email"
+              className="font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              Resend verification email
+            </Link>
+          </div> */}
           <div className="text-center text-sm">
             <span className="text-muted-foreground">
               Already have an account?{' '}
@@ -120,6 +132,17 @@ export const RegisterPage = () => {
             </Link>
           </div>
         </form>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-background text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+        <OAuthButtons />
       </div>
     </div>
   );
