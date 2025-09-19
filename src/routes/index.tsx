@@ -12,13 +12,17 @@ import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
 
-// Define custom route properties
+// 👉 import your auth pages
+import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
+import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
+import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
+import { VerifyEmailPage } from '../pages/public/OTPPage';
+
 interface AppRouteCustom {
   auth?: boolean;
   roles?: string[];
 }
 
-// Combine with RouteObject type
 type AppRoute = RouteObject & AppRouteCustom;
 
 const createProtectedRoute = (
@@ -44,6 +48,18 @@ export const publicRoutes: AppRoute[] = [
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/oauth-callback',
+    element: <OAuthCallbackPage />,
   },
 ];
 
@@ -108,6 +124,10 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'settings',
         element: createProtectedRoute(<div>Account Settings</div>, ['USER', 'ADMIN']),
       },
+      {
+        path: 'change-password',
+        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
+      },
     ],
   },
 ];
@@ -119,15 +139,17 @@ export const errorRoutes: AppRoute[] = [
   },
 ];
 
-// Combine all routes
 export const routes: AppRoute[] = [
   ...publicRoutes,
   ...dashboardRoutes,
   ...errorRoutes,
 ];
 
-// Auth redirect routes
+// 🚀 Auth redirect helper
 export const getAuthRedirects = (isAuthenticated: boolean) => ({
   '/login': isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />,
   '/register': isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />,
+  '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
+  '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
+  '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
 });
