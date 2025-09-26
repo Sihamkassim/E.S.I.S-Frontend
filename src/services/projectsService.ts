@@ -121,6 +121,32 @@ export async function getAdminProjects(params: Record<string, any> = {}, token: 
 	return response.data;
 }
 
+// Admin: get single project by slug (includes media if backend supports it)
+// Admin: attempt admin slug endpoint else fallback to public slug (with auth) to retrieve media
+export async function getAdminProjectBySlug(slug: string, token: string) {
+	try {
+		// If later an admin detail endpoint is added, prefer it here.
+		// Currently no /admin/projects/slug/:slug route exists, so this will 404.
+		const adminResp = await axios.get<Project>(`${ADMIN_API_BASE}/slug/${slug}`, {
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+		});
+		return adminResp.data;
+	} catch (e: any) {
+		// Fallback: use public detail which already includes media + restrictions (admin auth bypasses restriction)
+		const pubResp = await axios.get<Project>(`${API_BASE_PUBLIC}/${slug}`, {
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+		});
+		return pubResp.data;
+	}
+}
+
+export async function getAdminProjectById(id: number, token: string) {
+  const response = await axios.get<Project>(`${ADMIN_API_BASE}/${id}`, {
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
+
 // Admin: approve / feature project (featured true -> FEATURED, false -> APPROVED)
 export async function approveProject(id: number, featured: boolean | undefined, token: string) {
 	return axios.post(`${ADMIN_API_BASE}/${id}/approve`, { featured }, {

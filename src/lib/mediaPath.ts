@@ -27,12 +27,18 @@ const API_BASE = (() => {
 
 export function resolveMediaUrl(path?: string | null): string | undefined {
   if (!path) return undefined;
+  // Normalize backslashes to forward slashes (Windows paths)
+  path = path.replace(/\\+/g, '/');
   // Already absolute or protocol-relative
   if (/^(https?:)?\/\//i.test(path)) return path;
   // Handle possible double leading slashes cleanup
   const cleaned = path.replace(/^\/\/+/, '/');
   if (cleaned.startsWith('/uploads')) return `${API_BASE}${cleaned}`;
   if (cleaned.startsWith('uploads/')) return `${API_BASE}/${cleaned}`;
+  // If path is something like images/foo.png or projects/3/file.jpg assume under /uploads/
+  if (/^(images|projects|articles)\//i.test(cleaned)) {
+    return `${API_BASE}/uploads/${cleaned}`.replace(/([^:]\/)\/+/g, '$1/');
+  }
   // If path appears to be a file without protocol and API_BASE available
   if (/(png|jpe?g|gif|webp|mp4|webm)$/i.test(cleaned) && API_BASE) {
     // Try prefixing with base + '/'+ cleaned (avoid duplicate slashes)

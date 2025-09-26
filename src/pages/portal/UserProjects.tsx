@@ -64,15 +64,15 @@ const UserProjects: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+  <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-4">My Projects</h1>
+  <h1 className="text-3xl font-bold mb-4 dark:text-gray-100">My Projects</h1>
         <div className="flex flex-wrap gap-2">
           {(['drafts','submitted','approved','add'] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors border ${tab===t ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 hover:bg-gray-100 border-gray-300'}`}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors border focus:outline-none focus:ring-2 focus:ring-offset-1 dark:focus:ring-offset-gray-900 ${tab===t ? 'bg-blue-600 text-white border-blue-600 dark:border-blue-500' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'}`}
             >
               {t === 'drafts' && 'Drafts'}
               {t === 'submitted' && 'Submitted'}
@@ -112,17 +112,17 @@ const UserProjects: React.FC = () => {
                   />
                 );
               })}
-              { (tab === 'drafts' && editable.length === 0) && <div className="text-gray-500 col-span-full text-center py-8">No editable projects yet.</div> }
-              { (tab === 'submitted' && submitted.length === 0) && <div className="text-gray-500 col-span-full text-center py-8">No submitted projects yet.</div> }
-              { (tab === 'approved' && approved.length === 0) && <div className="text-gray-500 col-span-full text-center py-8">No approved projects yet.</div> }
+              { (tab === 'drafts' && editable.length === 0) && <div className="text-gray-500 dark:text-gray-400 col-span-full text-center py-8">No editable projects yet.</div> }
+              { (tab === 'submitted' && submitted.length === 0) && <div className="text-gray-500 dark:text-gray-400 col-span-full text-center py-8">No submitted projects yet.</div> }
+              { (tab === 'approved' && approved.length === 0) && <div className="text-gray-500 dark:text-gray-400 col-span-full text-center py-8">No approved projects yet.</div> }
             </div>
           )}
         </div>
       )}
 
       {tab === 'add' && (
-        <div className="max-w-2xl bg-white border rounded-lg p-6 shadow-sm">
-          <h2 className="text-2xl font-bold mb-4">Create New Project</h2>
+        <div className="max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm">
+          <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">Create New Project</h2>
             <ProjectForm
               onSubmit={handleCreateSubmit}
               loading={createLoading}
@@ -135,28 +135,28 @@ const UserProjects: React.FC = () => {
 
       {/* Edit Project Modal */}
       {showEditModal && selectedProject && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start md:items-center justify-center p-2 sm:p-4 overflow-y-auto z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-4 sm:p-6 relative animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start md:items-center justify-center p-2 sm:p-4 overflow-y-auto z-50">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-full max-w-3xl p-4 sm:p-6 relative animate-fade-in">
             <div className="flex items-start justify-between mb-4">
-              <h2 className="text-2xl font-bold">Edit Project</h2>
+              <h2 className="text-2xl font-bold dark:text-gray-100">Edit Project</h2>
               <button
                 onClick={() => { setShowEditModal(false); setSelectedProject(null); }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                 aria-label="Close edit modal"
               >×</button>
             </div>
             {/* Existing media & cover selection (client-only cover change visual) */}
             {selectedProject.media && selectedProject.media.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Media</h3>
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Media</h3>
                 <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
                   {selectedProject.media.slice(0,5).map((m, idx) => {
                     const isVideo = m.type.toLowerCase().startsWith('video');
                     const isCover = (selectedProject.coverImage && selectedProject.coverImage === m.url) || (!selectedProject.coverImage && idx === 0);
                     return (
-                      <div key={m.id} className={`relative group border rounded overflow-hidden aspect-video bg-gray-50 min-w-[140px] snap-start ${isCover ? 'ring-2 ring-blue-500' : ''}`}>
+                      <div key={m.id} className={`relative group border border-gray-200 dark:border-gray-700 rounded overflow-hidden aspect-video bg-gray-50 dark:bg-gray-800 min-w-[140px] snap-start ${isCover ? 'ring-2 ring-blue-500' : ''}`}>
                         {isVideo ? (
-                          <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-600">Video</div>
+                          <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-600 dark:text-gray-300">Video</div>
                         ) : (
                           <img src={m.url.startsWith('http') ? m.url : (import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '')?.replace(/\/api(?:\/v\d+)?$/, '') + m.url)} alt={m.type} className="object-cover w-full h-full" />
                         )}
@@ -186,7 +186,7 @@ const UserProjects: React.FC = () => {
                   })}
                 </div>
                 {selectedProject.media.length > 5 && (
-                  <p className="mt-1 text-xs text-gray-500">Showing first 5 media items (max enforced on create).</p>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Showing first 5 media items (max enforced on create).</p>
                 )}
               </div>
             )}
@@ -227,19 +227,19 @@ const UserProjects: React.FC = () => {
 
       {/* Submit Confirmation Modal */}
       {showSubmitModal && selectedProject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Submit Project</h2>
-            <p className="mb-4">Are you sure you want to submit this project for review?</p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4 dark:text-gray-100">Submit Project</h2>
+            <p className="mb-4 text-gray-700 dark:text-gray-300">Are you sure you want to submit this project for review?</p>
             <div className="flex justify-end space-x-2">
               <button
-                className="px-4 py-2 border border-gray-300 rounded-md"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
                 onClick={() => setShowSubmitModal(false)}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-md"
                 onClick={handleSubmitProject}
               >
                 Submit

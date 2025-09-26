@@ -39,10 +39,10 @@ export const useAdminProjectsStore = create<AdminProjectsState>((set, get) => ({
 	loading: false,
 	actionLoading: false,
 	error: null,
-	filters: { page: 1, limit: 12 },
+	filters: { page: 1, limit: 10 },
 	setToken: (t) => set({ token: t }),
 	setFilters: (f) => set(state => ({ filters: { ...state.filters, ...f, page: f.page ?? state.filters.page } })),
-	resetFilters: () => set({ filters: { page: 1, limit: 12 } }),
+	resetFilters: () => set({ filters: { page: 1, limit: 10 } }),
 	async fetch() {
 		const { token, filters } = get();
 		if (!token) { set({ error: 'Missing admin token' }); return; }

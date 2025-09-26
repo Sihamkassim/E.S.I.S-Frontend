@@ -66,46 +66,46 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initial = empty, onSub
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Title</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" value={form.title} onChange={e => handleChange('title', e.target.value)} required />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value={form.title} onChange={e => handleChange('title', e.target.value)} required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Summary</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" value={form.summary} onChange={e => handleChange('summary', e.target.value)} required />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Summary</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value={form.summary} onChange={e => handleChange('summary', e.target.value)} required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Team Name</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" value={form.teamName} onChange={e => handleChange('teamName', e.target.value)} required />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Team Name</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value={form.teamName} onChange={e => handleChange('teamName', e.target.value)} required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Team Members</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Comma separated names" value={form.teamMembers} onChange={e => handleChange('teamMembers', e.target.value)} />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Team Members</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Comma separated names" value={form.teamMembers} onChange={e => handleChange('teamMembers', e.target.value)} />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Demo Link</label>
-        <input type="url" className="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="https://example.com/demo" value={form.demoLink} onChange={e => handleChange('demoLink', e.target.value)} />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Demo Link</label>
+        <input type="url" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="https://example.com/demo" value={form.demoLink} onChange={e => handleChange('demoLink', e.target.value)} />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Repository Link</label>
-        <input type="url" className="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="https://github.com/username/repo" value={form.repoLink} onChange={e => handleChange('repoLink', e.target.value)} />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Repository Link</label>
+        <input type="url" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="https://github.com/username/repo" value={form.repoLink} onChange={e => handleChange('repoLink', e.target.value)} />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Description</label>
-        <textarea className="mt-1 block w-full border border-gray-300 rounded-md p-2" rows={3} value={form.description} onChange={e => handleChange('description', e.target.value)} required />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+        <textarea className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows={3} value={form.description} onChange={e => handleChange('description', e.target.value)} required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Tech Stack</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Comma separated (e.g., React, Node.js, MongoDB)" value={form.stack} onChange={e => handleChange('stack', e.target.value)} />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tech Stack</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Comma separated (e.g., React, Node.js, MongoDB)" value={form.stack} onChange={e => handleChange('stack', e.target.value)} />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Country</label>
-        <input type="text" className="mt-1 block w-full border border-gray-300 rounded-md p-2" value={form.country} onChange={e => handleChange('country', e.target.value)} required />
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
+        <input type="text" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value={form.country} onChange={e => handleChange('country', e.target.value)} required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cover Image</label>
         <input
           type="file"
-          className="mt-1 block w-full"
+          className="mt-1 block w-full text-gray-700 dark:text-gray-200 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-gray-700 file:text-blue-700 dark:file:text-gray-200 hover:file:bg-blue-100 dark:hover:file:bg-gray-600"
           accept="image/*"
           onChange={e => {
             const file = e.target.files?.[0] || null;
@@ -115,14 +115,14 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initial = empty, onSub
         />
       </div>
       <div>
-  <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center justify-between">
           <span>Additional Media (Images / Videos)</span>
-          <span className="text-xs text-gray-400">You can select multiple</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500">You can select multiple</span>
         </label>
         <input
           type="file"
           multiple
-          className="mt-1 block w-full"
+          className="mt-1 block w-full text-gray-700 dark:text-gray-200 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-gray-700 file:text-blue-700 dark:file:text-gray-200 hover:file:bg-blue-100 dark:hover:file:bg-gray-600"
           accept="image/*,video/*"
           onChange={e => {
             const arr = e.target.files ? Array.from(e.target.files) : [];
@@ -139,11 +139,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initial = empty, onSub
               const url = URL.createObjectURL(file);
               const overallIndex = (form.media ? 1 : 0) + idx; // if cover exists it's index 0
               return (
-                <div key={idx} className="relative group border rounded overflow-hidden aspect-video bg-gray-50 flex items-center justify-center">
+                <div key={idx} className="relative group border border-gray-300 dark:border-gray-600 rounded overflow-hidden aspect-video bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
                   {isImage ? (
                     <img src={url} alt={file.name} className="object-cover w-full h-full" />
                   ) : (
-                    <div className="text-[10px] p-2 text-center text-gray-600">
+                    <div className="text-[10px] p-2 text-center text-gray-600 dark:text-gray-300">
                       <span className="block font-medium">Video</span>
                       <span className="truncate block max-w-[60px]">{file.name}</span>
                     </div>
@@ -168,7 +168,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initial = empty, onSub
       {validationError && <div className="text-red-500 text-sm">{validationError}</div>}
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <div className="flex justify-end">
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md" disabled={loading}>{loading ? 'Saving...' : 'Create Project'}</button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-gray-900 disabled:opacity-60 disabled:cursor-not-allowed" disabled={loading}>{loading ? 'Saving...' : 'Create Project'}</button>
       </div>
     </form>
   );
