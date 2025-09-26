@@ -2,12 +2,15 @@ import { ReactNode } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import AdminProjects from '../pages/portal/AdminProjects';
 import AdminWebinars from '../pages/portal/AdminWebinar';
 import CreateWebinarPage from '../pages/portal/CreateWebinarPage';
 import { DashboardPage } from '../pages/portal/DashboardPage';
+import UserProjects from '../pages/portal/UserProjects';
 import UserWebinars from '../pages/portal/UserWebinars';
 import { LoginPage } from '../pages/public/LoginPage';
 import { NotFoundPage } from '../pages/public/NotFoundPage';
+import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
@@ -61,6 +64,10 @@ export const publicRoutes: AppRoute[] = [
     path: '/oauth-callback',
     element: <OAuthCallbackPage />,
   },
+  {
+  path: '/projects',
+  element: <ProjectsPage />,
+}
 ];
 
 export const dashboardRoutes: AppRoute[] = [
@@ -112,10 +119,14 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'startup-programs',
         element: createProtectedRoute(<div>Startup Programs</div>, ['USER', 'ADMIN']),
       },
-      {
-        path: 'projects',
-        element: createProtectedRoute(<div>Projects Page</div>, ['USER', 'ADMIN']),
-      },
+       {
+      path: 'projects/my',
+      element: createProtectedRoute(<UserProjects />, ['USER']),
+    },
+    {
+      path: 'projects',
+      element: createProtectedRoute(<AdminProjects />, ['ADMIN']),
+    },
       {
         path: 'articles',
         element: createProtectedRoute(<div>Articles Page</div>, ['USER', 'ADMIN']),
