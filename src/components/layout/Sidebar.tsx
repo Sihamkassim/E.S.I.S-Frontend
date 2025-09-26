@@ -4,19 +4,19 @@ import { useTheme } from '../../hooks/useTheme';
 
 // Icons
 import {
-    Briefcase,
-    Building,
-    ChevronLeft,
-    ChevronRight,
-    ClipboardList,
-    CreditCard,
-    FileText,
-    LayoutDashboard,
-    Rocket,
-    Settings,
-    UserCircle,
-    Users,
-    Video
+  Briefcase,
+  Building,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  CreditCard,
+  FileText,
+  LayoutDashboard,
+  Rocket,
+  Settings,
+  UserCircle,
+  Users,
+  Video
 } from 'lucide-react';
 
 interface NavItem {
@@ -76,11 +76,17 @@ const navigationItems: NavItem[] = [
     icon: <Rocket className="w-5 h-5" />,
     roles: ['USER', 'ADMIN']
   },
+   {
+    title: 'My Projects',
+    path: '/dashboard/projects/my',
+    icon: <Building className="w-5 h-5" />,
+    roles: ['USER']
+  },
   {
-    title: 'Projects',
+    title: 'Manage Projects',
     path: '/dashboard/projects',
     icon: <Building className="w-5 h-5" />,
-    roles: ['USER', 'ADMIN']
+    roles: ['ADMIN']
   },
   {
     title: 'Articles',
