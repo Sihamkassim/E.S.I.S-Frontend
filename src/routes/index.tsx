@@ -20,6 +20,19 @@ import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
 import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
 import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
 import { VerifyEmailPage } from '../pages/public/OTPPage';
+import { ArticlePage } from '@/pages/public/articles/ArticlePage';
+import ArticlesPage from '@/pages/public/articles/ArticlesPage';
+import AdminArticles from '@/pages/admin/AdminArticlesPage';
+import PostArticlePage from '@/pages/admin/PostArticlePage';
+import EditArticlePage from '@/pages/admin/EditArticlePage';
+import UsersPage from '@/pages/admin/UsersPage';
+import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
+
+// 👉 import your auth pages
+import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
+import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
+import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
+import { VerifyEmailPage } from '../pages/public/OTPPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -65,6 +78,18 @@ export const publicRoutes: AppRoute[] = [
     element: <OAuthCallbackPage />,
   },
   {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/oauth-callback',
+    element: <OAuthCallbackPage />,
+  },
+  {
   path: '/projects',
   element: <ProjectsPage />,
 }
@@ -81,7 +106,7 @@ export const dashboardRoutes: AppRoute[] = [
       },
       {
         path: 'users',
-        element: createProtectedRoute(<div>Users Page</div>, ['ADMIN']),
+        element: createProtectedRoute(<UsersPage />, ['ADMIN']),
       },
       {
         path: 'webinars',
@@ -129,11 +154,31 @@ export const dashboardRoutes: AppRoute[] = [
     },
       {
         path: 'articles',
-        element: createProtectedRoute(<div>Articles Page</div>, ['USER', 'ADMIN']),
+        element: createProtectedRoute(<ArticlesPage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'articles/:slug',
+        element: createProtectedRoute(<ArticlePage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'admin-articles',
+        element: createProtectedRoute(<AdminArticles />, ['ADMIN']),
+      },
+      {
+        path: 'admin-articles/create',
+        element: createProtectedRoute(<PostArticlePage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-articles/:id/edit',
+        element: createProtectedRoute(<EditArticlePage />, ['ADMIN']),
       },
       {
         path: 'settings',
-        element: createProtectedRoute(<div>Account Settings</div>, ['USER', 'ADMIN']),
+        element: createProtectedRoute(<AccountSettingsPage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'change-password',
+        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
       },
       {
         path: 'change-password',
@@ -156,10 +201,16 @@ export const routes: AppRoute[] = [
   ...errorRoutes,
 ];
 
+
+
+// 🚀 Auth redirect helper
 // 🚀 Auth redirect helper
 export const getAuthRedirects = (isAuthenticated: boolean) => ({
   '/login': isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />,
   '/register': isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />,
+  '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
+  '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
+  '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
   '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
   '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
   '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
