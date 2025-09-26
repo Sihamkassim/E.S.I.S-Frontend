@@ -18,12 +18,18 @@ import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
 import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
 import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
 import { VerifyEmailPage } from '../pages/public/OTPPage';
-import { ArticlePage } from '@/pages/public/articles/ArticlePage';
-import ArticlesPage from '@/pages/public/articles/ArticlesPage';
+import AdminAddPlan from '@/pages/portal/AdminAddPlan';
+import AdminPlans from '@/pages/portal/AdminPlans';
+import UserPlans from '@/pages/portal/UserPlane';
+import UserCreateStartup from '@/pages/portal/UserCreatStartupp';
+import AdminGetStartups from '@/pages/portal/AdminGetStartups';
+import UserGetStartup from '@/pages/portal/UserGetStartup';
+import UsersPage from '@/pages/admin/UsersPage';
 import AdminArticles from '@/pages/admin/AdminArticlesPage';
+import ArticlesPage from '@/pages/public/articles/ArticlesPage';
+import { ArticlePage } from '@/pages/public/articles/ArticlePage';
 import PostArticlePage from '@/pages/admin/PostArticlePage';
 import EditArticlePage from '@/pages/admin/EditArticlePage';
-import UsersPage from '@/pages/admin/UsersPage';
 import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
 
 interface AppRouteCustom {
@@ -82,9 +88,10 @@ export const publicRoutes: AppRoute[] = [
     element: <OAuthCallbackPage />,
   },
   {
-  path: '/projects',
-  element: <ProjectsPage />,
-}
+    path: '/projects',
+    element: <ProjectsPage />,
+  }
+
 ];
 
 export const dashboardRoutes: AppRoute[] = [
@@ -136,14 +143,14 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'startup-programs',
         element: createProtectedRoute(<div>Startup Programs</div>, ['USER', 'ADMIN']),
       },
-       {
-      path: 'projects/my',
-      element: createProtectedRoute(<UserProjects />, ['USER']),
-    },
-    {
-      path: 'projects',
-      element: createProtectedRoute(<AdminProjects />, ['ADMIN']),
-    },
+      {
+        path: 'projects/my',
+        element: createProtectedRoute(<UserProjects />, ['USER']),
+      },
+      {
+        path: 'projects',
+        element: createProtectedRoute(<AdminProjects />, ['ADMIN']),
+      },
       {
         path: 'articles',
         element: createProtectedRoute(<ArticlesPage />, ['USER', 'ADMIN']),
@@ -176,6 +183,31 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'change-password',
         element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
       },
+      {
+        path: 'membership-plans',
+        element: createProtectedRoute(<AdminPlans />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'add-plans',
+        element: createProtectedRoute(<AdminAddPlan />, ['ADMIN']),
+      },
+      {
+        path: 'get-plans',
+        element: createProtectedRoute(<UserPlans />, ['USER']),
+      },
+      {
+        path: 'post-startup',
+        element: createProtectedRoute(<UserCreateStartup />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'get-startup',
+        element: createProtectedRoute(<AdminGetStartups />, ['ADMIN']),
+      },
+      {
+        path: 'me-startup',
+        element: createProtectedRoute(<UserGetStartup />, ['USER']),
+      },
+
     ],
   },
 ];
