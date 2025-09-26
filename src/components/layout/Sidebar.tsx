@@ -12,6 +12,7 @@ import {
   CreditCard,
   FileText,
   LayoutDashboard,
+  PanelLeft,
   Rocket,
   Settings,
   UserCircle,
@@ -46,6 +47,12 @@ const navigationItems: NavItem[] = [
     roles: ['USER']
   },
   {
+    title: 'Internships',
+    path: '/dashboard/admin-internships',
+    icon: <Briefcase className="w-5 h-5" />,
+    roles: ['ADMIN']
+  },
+  {
     title: 'My Webinars',
     path: '/dashboard/webinars',
     icon: <Video className="w-5 h-5" />,
@@ -58,10 +65,16 @@ const navigationItems: NavItem[] = [
     roles: ['ADMIN']
   },
   {
-    title: 'Membership',
+    title: 'Memberships',
     path: '/dashboard/membership',
     icon: <UserCircle className="w-5 h-5" />,
-    roles: ['USER', 'ADMIN']
+    roles: ['ADMIN']
+  },
+  {
+    title: 'Plans',
+    path: '/dashboard/get-plans',
+    icon: <PanelLeft className="w-5 h-5" />,
+    roles: ['USER']
   },
   {
     title: 'Billing',
@@ -69,14 +82,19 @@ const navigationItems: NavItem[] = [
     icon: <CreditCard className="w-5 h-5" />,
     roles: ['USER']
   },
-  
   {
     title: 'Startup Programs',
-    path: '/dashboard/startup-programs',
+    path: '/dashboard/me-startup',
     icon: <Rocket className="w-5 h-5" />,
-    roles: ['USER', 'ADMIN']
+    roles: ['USER']
   },
-   {
+  {
+    title: 'Startup Programs',
+    path: '/dashboard/get-startup',
+    icon: <Rocket className="w-5 h-5" />,
+    roles: ['ADMIN']
+  },
+  {
     title: 'My Projects',
     path: '/dashboard/projects/my',
     icon: <Building className="w-5 h-5" />,
@@ -96,7 +114,7 @@ const navigationItems: NavItem[] = [
   },
   {
     title: 'Membership Plans',
-    path: '/admin/membership-plans',
+    path: '/dashboard/membership-plans',
     icon: <ClipboardList className="w-5 h-5" />,
     roles: ['ADMIN']
   },
@@ -144,9 +162,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onCl
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className={`absolute -right-3 top-16 p-1.5 rounded-full ${
-          theme === 'dark' ? 'bg-gray-800 text-gray-400 hover:text-white' : 'bg-white text-gray-600 hover:text-gray-900'
-        } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} shadow-sm cursor-pointer`}
+        className={`absolute -right-3 top-16 p-1.5 rounded-full ${theme === 'dark' ? 'bg-gray-800 text-gray-400 hover:text-white' : 'bg-white text-gray-600 hover:text-gray-900'
+          } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} shadow-sm cursor-pointer`}
       >
         {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
@@ -173,15 +190,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onCl
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center p-2 mb-2 rounded-lg transition-all duration-200 ${
-                isActive
-                  ? theme === 'dark'
-                    ? 'bg-primary text-white'
-                    : 'bg-primary-light/10 text-primary'
-                  : theme === 'dark'
+              className={`flex items-center p-2 mb-2 rounded-lg transition-all duration-200 ${isActive
+                ? theme === 'dark'
+                  ? 'bg-primary text-white'
+                  : 'bg-primary-light/10 text-primary'
+                : theme === 'dark'
                   ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+                }`}
             >
               <div className={isCollapsed ? 'mx-auto' : ''}>{item.icon}</div>
               {!isCollapsed && <span className="ml-3 font-medium">{item.title}</span>}
