@@ -2,23 +2,30 @@ import { ReactNode } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import AdminProjects from '../pages/portal/AdminProjects';
 import AdminWebinars from '../pages/portal/AdminWebinar';
 import CreateWebinarPage from '../pages/portal/CreateWebinarPage';
 import { DashboardPage } from '../pages/portal/DashboardPage';
+import UserProjects from '../pages/portal/UserProjects';
 import UserWebinars from '../pages/portal/UserWebinars';
 import { LoginPage } from '../pages/public/LoginPage';
 import { NotFoundPage } from '../pages/public/NotFoundPage';
+import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
 
-// Define custom route properties
+// 👉 import your auth pages
+import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
+import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
+import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
+import { VerifyEmailPage } from '../pages/public/OTPPage';
+
 interface AppRouteCustom {
   auth?: boolean;
   roles?: string[];
 }
 
-// Combine with RouteObject type
 type AppRoute = RouteObject & AppRouteCustom;
 
 const createProtectedRoute = (
@@ -45,6 +52,22 @@ export const publicRoutes: AppRoute[] = [
     path: '/register',
     element: <RegisterPage />,
   },
+  {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/oauth-callback',
+    element: <OAuthCallbackPage />,
+  },
+  {
+  path: '/projects',
+  element: <ProjectsPage />,
+}
 ];
 
 export const dashboardRoutes: AppRoute[] = [
@@ -96,10 +119,14 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'startup-programs',
         element: createProtectedRoute(<div>Startup Programs</div>, ['USER', 'ADMIN']),
       },
-      {
-        path: 'projects',
-        element: createProtectedRoute(<div>Projects Page</div>, ['USER', 'ADMIN']),
-      },
+       {
+      path: 'projects/my',
+      element: createProtectedRoute(<UserProjects />, ['USER']),
+    },
+    {
+      path: 'projects',
+      element: createProtectedRoute(<AdminProjects />, ['ADMIN']),
+    },
       {
         path: 'articles',
         element: createProtectedRoute(<div>Articles Page</div>, ['USER', 'ADMIN']),
@@ -107,6 +134,10 @@ export const dashboardRoutes: AppRoute[] = [
       {
         path: 'settings',
         element: createProtectedRoute(<div>Account Settings</div>, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'change-password',
+        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
       },
     ],
   },
@@ -119,15 +150,17 @@ export const errorRoutes: AppRoute[] = [
   },
 ];
 
-// Combine all routes
 export const routes: AppRoute[] = [
   ...publicRoutes,
   ...dashboardRoutes,
   ...errorRoutes,
 ];
 
-// Auth redirect routes
+// 🚀 Auth redirect helper
 export const getAuthRedirects = (isAuthenticated: boolean) => ({
   '/login': isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />,
   '/register': isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />,
+  '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
+  '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
+  '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
 });
