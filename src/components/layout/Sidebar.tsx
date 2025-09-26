@@ -86,7 +86,13 @@ const navigationItems: NavItem[] = [
     title: 'Articles',
     path: '/dashboard/articles',
     icon: <FileText className="w-5 h-5" />,
-    roles: ['USER', 'ADMIN']
+    roles: ['USER']
+  },
+  {
+    title: 'Manage Articles',
+    path: '/dashboard/admin-articles',
+    icon: <FileText className="w-5 h-5" />,
+    roles: ['ADMIN']
   },
   {
     title: 'Membership Plans',
