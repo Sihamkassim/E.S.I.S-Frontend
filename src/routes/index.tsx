@@ -14,8 +14,6 @@ import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
-
-// 👉 import your auth pages
 import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
 import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
 import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
@@ -27,12 +25,6 @@ import PostArticlePage from '@/pages/admin/PostArticlePage';
 import EditArticlePage from '@/pages/admin/EditArticlePage';
 import UsersPage from '@/pages/admin/UsersPage';
 import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
-
-// 👉 import your auth pages
-import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
-import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
-import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
-import { VerifyEmailPage } from '../pages/public/OTPPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -201,16 +193,10 @@ export const routes: AppRoute[] = [
   ...errorRoutes,
 ];
 
-
-
-// 🚀 Auth redirect helper
 // 🚀 Auth redirect helper
 export const getAuthRedirects = (isAuthenticated: boolean) => ({
   '/login': isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />,
   '/register': isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />,
-  '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
-  '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
-  '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
   '/verify-email': isAuthenticated ? <Navigate to="/dashboard" replace /> : <VerifyEmailPage />,
   '/forgot-password': isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPasswordPage />,
   '/oauth-callback': isAuthenticated ? <Navigate to="/dashboard" replace /> : <OAuthCallbackPage />,
