@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { ArticleCard } from "../../../components/articles/ArticleCard";
+import { ArticleCard } from "../../components/articles/ArticleCard";
 import {
   articleService,
   Article,
   // Category,
   Tag,
-} from "../../../services/articleService";
+} from "../../services/articleService";
 
 interface FilterState {
   search: string;

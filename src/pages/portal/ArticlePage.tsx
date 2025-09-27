@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { articleService, Article } from '../../../services/articleService';
-import { Spinner } from '../../../components/Spinner';
-import { ArticleCard } from '../../../components/articles/ArticleCard';
+import { articleService, Article } from '../../services/articleService';
+import { Spinner } from '../../components/Spinner';
+import { ArticleCard } from '../../components/articles/ArticleCard';
 
 // Fallback image for articles without featured images
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80';
@@ -92,12 +92,12 @@ export const ArticlePage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <div className='mb-8'>
-          <Link
-            to="/dashboard/articles"
+          <button
+            onClick={() => window.history.back()}
             className="inline-flex items-center px-4 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
           >
             ← Back to All Articles
-          </Link>
+          </button>
         </div>
 
         {/* Article Header */}
