@@ -20,8 +20,13 @@ const UserWebinars: React.FC = () => {
 
   useEffect(() => {
     if (activeTab === 'upcoming') {
+      // fetch both so we can show View Ticket button inline
       fetchUpcomingWebinars();
+      fetchUserTickets();
     } else if (activeTab === 'registered') {
+      fetchUserTickets();
+    } else if (activeTab === 'past') {
+      fetchUpcomingWebinars(); // reuse to keep list fresh
       fetchUserTickets();
     }
   }, [activeTab, fetchUpcomingWebinars, fetchUserTickets]);

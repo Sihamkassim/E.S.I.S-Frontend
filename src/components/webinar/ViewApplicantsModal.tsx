@@ -1,5 +1,5 @@
-import { Loader2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, Loader2, Ticket as TicketIcon, User2 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 import { useWebinarStore, Webinar, WebinarApplication } from '../../store/useWebinarstore';
 import { Badge } from '../ui/badge';
@@ -19,24 +19,11 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({ webinar, isOp
     webinarApplicants, 
     error, 
     fetchApplicantsForWebinar,
-    approveApplication,
-    rejectApplication,
     clearApplicants,
   } = useWebinarStore();
   const [isLoading, setIsLoading] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({}); // track expanded rows
-
-  const handleApprove = async (applicationId: string) => {
-    setIsLoading(true);
-    await approveApplication(applicationId);
-    setIsLoading(false);
-  };
-
-  const handleReject = async (applicationId: string) => {
-    setIsLoading(true);
-    await rejectApplication(applicationId);
-    setIsLoading(false);
-  };
+  const [sort, setSort] = useState<'latest' | 'oldest'>('latest');
 
   const toggleExpand = (id: string) => {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
@@ -56,16 +43,44 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({ webinar, isOp
     }
   }, [isOpen, webinar, fetchApplicantsForWebinar, clearApplicants]);
 
-  if (!webinar) return null;
+  // Map legacy statuses to simplified set
+  const mapStatus = (status: string) => {
+    const lower = status.toLowerCase();
+    if (['approved', 'confirmed', 'paid'].includes(lower)) return 'Confirmed';
+    if (['rejected', 'cancelled'].includes(lower)) return 'Rejected';
+    return 'Applied';
+  };
 
   const renderStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'approved': return <Badge variant="default" className="bg-green-500 hover:bg-green-600">Approved</Badge>;
-      case 'rejected': return <Badge variant="destructive">Rejected</Badge>;
-      case 'pending':
-      default: return <Badge variant="secondary">Pending</Badge>;
+    const mapped = mapStatus(status);
+    switch (mapped) {
+      case 'Confirmed':
+        return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">Confirmed</Badge>;
+      case 'Rejected':
+        return <Badge variant="destructive">Rejected</Badge>;
+      case 'Applied':
+      default:
+        return <Badge variant="secondary">Applied</Badge>;
     }
   };
+
+  // Build question map (id -> text) for nicer answer labels
+  const questionMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    webinar?.questions?.forEach(q => { map[q.id] = q.question; });
+    return map;
+  }, [webinar?.questions]);
+
+  const sortedApplicants = useMemo(() => {
+    const arr = [...(webinarApplicants || [])];
+    return arr.sort((a,b) => {
+      const da = new Date(a.createdAt || 0).getTime();
+      const db = new Date(b.createdAt || 0).getTime();
+      return sort === 'latest' ? db - da : da - db;
+    });
+  }, [webinarApplicants, sort]);
+
+  if (!webinar) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -86,78 +101,98 @@ const ViewApplicantsModal: React.FC<ViewApplicantsModalProps> = ({ webinar, isOp
               Error: {error}
             </p>
           ) : (webinarApplicants || []).length > 0 ? (
+            <>
+            <div className="flex items-center justify-between mb-2 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Total:</span>
+                <span>{webinarApplicants.length}</span>
+                <span className="hidden md:inline text-muted-foreground">(Confirmed {webinarApplicants.filter(a => mapStatus(a.status)==='Confirmed').length})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant={sort==='latest'? 'default':'secondary'} size="sm" onClick={()=>setSort('latest')}>Latest</Button>
+                <Button variant={sort==='oldest'? 'default':'secondary'} size="sm" onClick={()=>setSort('oldest')}>Oldest</Button>
+              </div>
+            </div>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Applicant ID</TableHead>
+                  <TableHead>User</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Applied On</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Applied</TableHead>
+                  <TableHead>Ticket</TableHead>
+                  <TableHead className="text-right">Details</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {(webinarApplicants || []).map((app: WebinarApplication) => (
-                  <React.Fragment key={app.id}>
-                    <TableRow>
-                      <TableCell className="font-medium">{app.userId}</TableCell>
-                      <TableCell>{renderStatusBadge(app.status)}</TableCell>
-                      <TableCell>{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'N/A'}</TableCell>
-                      <TableCell className="text-right flex gap-2 justify-end">
-                        {app.status.toLowerCase() === 'pending' && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-                              onClick={() => handleApprove(app.id)}
-                              disabled={isLoading}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                              onClick={() => handleReject(app.id)}
-                              disabled={isLoading}
-                            >
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                        <Button size="sm" variant="ghost" onClick={() => toggleExpand(app.id)}>
-                          {expanded[app.id] ? "Hide Info" : "More Info"}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-
-                    {expanded[app.id] && (
-  <TableRow>
-    <TableCell colSpan={4} className="bg-gray-50 dark:bg-gray-800">
-      <div className="p-2 space-y-1">
-        <p><strong>User ID:</strong> {app.userId}</p>
-        <p><strong>Email:</strong> {app.user?.email || 'N/A'}</p>
-        {app.answers && Object.keys(app.answers).length > 0 && (
-          <div>
-            <strong>Answers:</strong>
-            <ul className="list-disc list-inside">
-              {Object.entries(app.answers).map(([q, a]) => (
-                <li key={q}>
-                  <strong>{q}:</strong> {Array.isArray(a) ? a.join(", ") : a}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </TableCell>
-  </TableRow>
-)}
-
-                  </React.Fragment>
-                ))}
+                {sortedApplicants.map((app: WebinarApplication) => {
+                  const mapped = mapStatus(app.status);
+                  const ticketObj = Array.isArray(app.ticket) ? app.ticket[0] : app.ticket || null;
+                  const hasTicket = !!ticketObj;
+                  const name = app.user?.profile?.firstName || app.user?.profile?.lastName ? `${app.user?.profile?.firstName||''} ${app.user?.profile?.lastName||''}`.trim() : undefined;
+                  return (
+                    <React.Fragment key={app.id}>
+                      <TableRow className={hasTicket ? 'border-l-4 border-l-emerald-500' : ''}>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="inline-flex items-center gap-1"><User2 className="w-4 h-4"/>{name || app.user?.email || app.userId}</span>
+                            {app.user?.email && name && <span className="text-xs text-muted-foreground">{app.user?.email}</span>}
+                          </div>
+                        </TableCell>
+                        <TableCell>{renderStatusBadge(mapped)}</TableCell>
+                        <TableCell>{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '—'}</TableCell>
+                        <TableCell>
+                          {hasTicket ? (
+                            <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-medium">
+                              <TicketIcon className="w-4 h-4"/> Issued
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button size="sm" variant="ghost" onClick={() => toggleExpand(app.id.toString())} className="flex items-center gap-1">
+                            {expanded[app.id] ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>}
+                            {expanded[app.id] ? 'Hide' : 'Info'}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      {expanded[app.id] && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="bg-muted/40 dark:bg-gray-800">
+                            <div className="p-3 space-y-2 text-sm">
+                              <div className="grid gap-2 md:grid-cols-3">
+                                <div><span className="font-medium">User ID:</span> {app.userId}</div>
+                                <div><span className="font-medium">Email:</span> {app.user?.email || 'N/A'}</div>
+                                {ticketObj && <div><span className="font-medium">Ticket Code:</span> {ticketObj.code}</div>}
+                              </div>
+                              {app.answers && Object.keys(app.answers).length > 0 && (
+                                <div>
+                                  <span className="font-medium">Answers:</span>
+                                  <ul className="list-disc list-inside mt-1 space-y-0.5">
+                                    {Object.entries(app.answers).map(([q, a]) => {
+                                      const label = questionMap[q] || questionMap[q.toLowerCase()] || q;
+                                      return (
+                                        <li key={q}>
+                                          <strong>{label}:</strong> {Array.isArray(a) ? a.join(', ') : a}
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                </div>
+                              )}
+                              {!app.answers || Object.keys(app.answers).length === 0 && (
+                                <div className="text-xs text-muted-foreground">No questionnaire answers submitted.</div>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </TableBody>
             </Table>
+            </>
           ) : (
             <p className="text-center text-gray-500 dark:text-gray-400">
               No applicants yet.

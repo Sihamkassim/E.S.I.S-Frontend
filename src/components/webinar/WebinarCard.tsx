@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Webinar } from '../../store/useWebinarstore';
+import { Webinar, useWebinarStore } from '../../store/useWebinarstore';
+import TicketModal from './TicketModal';
 import WebinarApplyModal from './WebinarApplyModal';
 
 interface WebinarCardProps {
@@ -12,6 +13,9 @@ interface WebinarCardProps {
 
 const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
   const [showApplyModal, setShowApplyModal] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const getTicketForWebinar = useWebinarStore(s => s.getTicketForWebinar);
+  const ticket = getTicketForWebinar(webinar.id);
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -27,9 +31,14 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
     e.preventDefault();
     if (!isAuthenticated) {
       navigate(`/login?redirect=/webinars/${webinar.id}`);
-    } else {
-      setShowApplyModal(true);
+      return;
     }
+    setShowApplyModal(true);
+  };
+
+  const handleViewTicket = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (ticket) setShowTicketModal(true);
   };
 
   const formatDate = (dateString: string): string => {
@@ -44,25 +53,41 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
     }
   };
 
-  // fallback images
+  // Placeholder images (keep deterministic selection by id for variety)
   const placeholderImages = [
     'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000',
     'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1000',
     'https://images.unsplash.com/photo-1529070538774-1843cb3265df?q=80&w=1000'
   ];
 
-  let imageUrl = webinar.image;
-  if (!imageUrl) {
+  const pickPlaceholder = () => {
     let index = 0;
     if (typeof webinar.id === 'number') {
       index = webinar.id % placeholderImages.length;
     } else if (typeof webinar.id === 'string') {
-      index =
-        [...webinar.id].reduce((sum, c) => sum + c.charCodeAt(0), 0) %
-        placeholderImages.length;
+      index = [...webinar.id].reduce((sum, c) => sum + c.charCodeAt(0), 0) % placeholderImages.length;
     }
-    imageUrl = placeholderImages[index];
-  }
+    return placeholderImages[index];
+  };
+
+  const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL as string | undefined) || import.meta.env.VITE_API_BASE_URL?.replace(/\/api\/v1$/,'') || '';
+  const resolveImage = (raw?: string | null): string => {
+    if (!raw) return pickPlaceholder();
+    if (/^https?:\/\//i.test(raw)) return raw; // absolute already
+    // Strip any absolute filesystem prefix and keep uploads segment
+    let working = raw.replace(/\\/g, '/');
+    const idx = working.lastIndexOf('uploads');
+    if (idx !== -1) working = working.slice(idx);
+    const sanitized = working
+      .replace(/\\/g, '/')
+      .replace(/\/+/g, '/')
+      .replace(/^\/+/, '');
+    const base = BACKEND_URL.replace(/\/+$/, '');
+    if (base) return `${base}/${sanitized}`;
+    return `${window.location.origin}/${sanitized}`;
+  };
+
+  const imageUrl = resolveImage(webinar.image);
 
   return (
     <>
@@ -103,12 +128,21 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
           )}
 
           {/* Transparent Button */}
-          <button
-            onClick={handleRegisterClick}
-            className="w-full px-4 py-2 rounded-md border border-white/40 text-white hover:bg-white/20 transition"
-          >
-            Register Now
-          </button>
+          {ticket ? (
+            <button
+              onClick={handleViewTicket}
+              className="w-full px-4 py-2 rounded-md border border-green-400 text-green-300 bg-green-900/30 hover:bg-green-900/50 transition"
+            >
+              View Ticket
+            </button>
+          ) : (
+            <button
+              onClick={handleRegisterClick}
+              className="w-full px-4 py-2 rounded-md border border-white/40 text-white hover:bg-white/20 transition"
+            >
+              Register Now
+            </button>
+          )}
         </div>
       </div>
 
@@ -118,6 +152,18 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
           webinar={webinar}
           isOpen={showApplyModal}
           onClose={() => setShowApplyModal(false)}
+          onTicketIssued={() => {
+            setShowApplyModal(false);
+            setShowTicketModal(true);
+          }}
+        />
+      )}
+      {showTicketModal && ticket && (
+        <TicketModal
+          open={showTicketModal}
+          onClose={() => setShowTicketModal(false)}
+          webinar={webinar}
+          ticket={ticket}
         />
       )}
     </>

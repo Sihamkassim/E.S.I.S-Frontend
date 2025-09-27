@@ -13,7 +13,10 @@ const AdminWebinars: React.FC = () => {
     adminWebinars, 
     loading, 
     error, 
-    fetchAdminWebinars 
+    fetchAdminWebinars,
+    publishWebinar,
+    unpublishWebinar,
+    deleteWebinar
   } = useWebinarStore();
 
   const [activeTab, setActiveTab] = useState('all');
@@ -40,19 +43,20 @@ const AdminWebinars: React.FC = () => {
   const filteredWebinars = useMemo(() => {
     if (!adminWebinars) return [];
     
+    const q = searchQuery.trim().toLowerCase();
     return adminWebinars
-      .filter(webinar => {
-        // Tab-based filtering
-        if (activeTab === 'published') return webinar.isPublished;
-        if (activeTab === 'drafts') return !webinar.isPublished;
-        return true; // 'all' tab
+      .filter(w => {
+        if (activeTab === 'published') return !!w.isPublished;
+        if (activeTab === 'drafts') return !w.isPublished;
+        return true;
       })
-      .filter(webinar => 
-        // Search query filtering
-        webinar.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (webinar.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-        (webinar.speaker?.toLowerCase() || '').includes(searchQuery.toLowerCase())
-      );
+      .filter(w => {
+        if (!q) return true;
+        const title = (w.title || '').toString().toLowerCase();
+        const desc = (w.description || '').toString().toLowerCase();
+        const speaker = (w.speaker || '').toString().toLowerCase();
+        return title.includes(q) || desc.includes(q) || speaker.includes(q);
+      });
   }, [adminWebinars, activeTab, searchQuery]);
 
   if (loading) {
@@ -153,12 +157,28 @@ const AdminWebinars: React.FC = () => {
         {filteredWebinars.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
             {filteredWebinars.map(webinar => (
-                <AdminWebinarCard 
-                  key={webinar.id} 
-                  webinar={webinar} 
-                  onEdit={() => handleEdit(webinar)}
-                  onViewApplicants={() => handleViewApplicants(webinar)}
-                />
+              <AdminWebinarCard
+                key={webinar.id}
+                webinar={webinar}
+                onEdit={() => handleEdit(webinar)}
+                onViewApplicants={() => handleViewApplicants(webinar)}
+                onTogglePublish={async (publish) => {
+                  try {
+                    if (publish) await publishWebinar(webinar.id.toString());
+                    else await unpublishWebinar(webinar.id.toString());
+                  } catch (e) {
+                    // optionally surface toast if available
+                    console.error('Publish toggle failed', e);
+                  }
+                }}
+                onDelete={async () => {
+                  try {
+                    await deleteWebinar(webinar.id);
+                  } catch (e) {
+                    console.error('Delete webinar failed', e);
+                  }
+                }}
+              />
             ))}
           </div>
         ) : (

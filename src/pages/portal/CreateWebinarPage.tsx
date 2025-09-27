@@ -26,13 +26,18 @@ const CreateWebinarPage: React.FC = () => {
     faq: '',
     refundPolicy: '',
     image: null as File | null,
+    requiresPayment: false,
   });
   
   const [questions, setQuestions] = useState<Partial<WebinarQuestion>[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target as any;
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,21 +93,26 @@ const CreateWebinarPage: React.FC = () => {
 
     const webinarData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null) {
-        webinarData.append(key, value);
+      if (value === null) return;
+      if (key === 'requiresPayment') {
+        webinarData.append(key, value ? 'true' : 'false');
+      } else {
+        webinarData.append(key, value as any);
       }
     });
     // Append questions as a JSON string
     webinarData.append('questions', JSON.stringify(questions));
 
-    toast.promise(createWebinar(webinarData), {
-      loading: 'Creating webinar...',
-      success: () => {
-        navigate('/dashboard/admin-webinars');
-        return 'Webinar created successfully!';
-      },
-      error: (err) => `Failed to create webinar: ${err.message}`,
-    });
+    try {
+      await toast.promise(createWebinar(webinarData), {
+        loading: 'Creating webinar...',
+        success: 'Webinar created successfully!',
+        error: (err) => `Failed to create webinar: ${err.message}`,
+      });
+      navigate('/dashboard/admin-webinars');
+    } catch {
+      /* errors handled by toast */
+    }
   };
 
   return (
@@ -176,10 +186,32 @@ const CreateWebinarPage: React.FC = () => {
             <Input id="capacity" name="capacity" type="number" value={formData.capacity} onChange={handleChange} required />
           </div>
 
-          {/* Price */}
+          {/* Price & Requires Payment */}
           <div className="space-y-2">
-            <label htmlFor="price" className="font-medium">Price ($)</label>
-            <Input id="price" name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} required />
+            <label htmlFor="price" className="font-medium flex items-center justify-between">
+              <span>Price ($)</span>
+              <span className="flex items-center gap-2 text-xs font-normal">
+                <input
+                  type="checkbox"
+                  id="requiresPayment"
+                  name="requiresPayment"
+                  checked={formData.requiresPayment}
+                  onChange={handleChange}
+                  className="h-4 w-4"/>
+                <label htmlFor="requiresPayment" className="cursor-pointer">Paid</label>
+              </span>
+            </label>
+            <Input
+              id="price"
+              name="price"
+              type="number"
+              step="0.01"
+              value={formData.price}
+              onChange={handleChange}
+              disabled={!formData.requiresPayment}
+              required={formData.requiresPayment}
+            />
+            {!formData.requiresPayment && <p className="text-xs text-gray-500">Leave unchecked for a free webinar. Price ignored.</p>}
           </div>
 
           {/* Image */}

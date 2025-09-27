@@ -10,11 +10,12 @@ interface WebinarApplyModalProps {
   webinar: Webinar;
   isOpen: boolean;
   onClose: () => void;
+  onTicketIssued?: () => void;
 }
 
-const WebinarApplyModal: React.FC<WebinarApplyModalProps> = ({ webinar, isOpen, onClose }) => {
+const WebinarApplyModal: React.FC<WebinarApplyModalProps> = ({ webinar, isOpen, onClose, onTicketIssued }) => {
   const { theme } = useTheme();
-  const { applyForWebinar } = useWebinarStore();
+  const { applyForWebinar, initializeWebinarPayment } = useWebinarStore();
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
@@ -65,11 +66,40 @@ const WebinarApplyModal: React.FC<WebinarApplyModalProps> = ({ webinar, isOpen, 
     try {
       // Ensure webinar ID is number
       const webinarId = typeof webinar.id === 'string' ? Number(webinar.id) : webinar.id;
-      await applyForWebinar(webinarId, answers);
-      toast.success('Application submitted successfully!', {
-        description: 'We will review your application and get back to you soon.',
-      });
-      onClose();
+      const application = await applyForWebinar(webinarId, answers);
+
+      // Paid path: redirect to payment
+      if (application.requiresPayment && application.price && application.price > 0) {
+        toast.success('Application submitted. Redirecting to payment...', {
+          description: 'Please complete payment to secure your spot.'
+        });
+        try {
+          const paymentInit = await initializeWebinarPayment?.(webinarId, application.price);
+          const checkoutUrl = paymentInit?.data?.checkout_url || paymentInit?.data?.data?.checkout_url;
+          if (checkoutUrl) {
+            // Close modal before redirect
+            onClose();
+            window.location.href = checkoutUrl;
+            return;
+          }
+          toast.error('Failed to get payment checkout link', { description: 'Try again or contact support.' });
+        } catch (err: any) {
+          toast.error('Payment initialization failed', { description: err?.message || 'Try again later.' });
+        }
+      } else {
+        // Free path now returns ticket immediately
+        if ((application as any).ticket) {
+          toast.success('Your seat is confirmed!', {
+            description: `Ticket code: ${(application as any).ticket.code}`
+          });
+          onTicketIssued?.();
+        } else {
+          toast.success('Registered successfully!');
+        }
+        if (!(application as any).ticket) {
+          onClose();
+        }
+      }
     } catch (error: any) {
       toast.error('Failed to submit application', {
         description: error?.message || 'Please try again later',

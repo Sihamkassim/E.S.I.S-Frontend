@@ -4,35 +4,63 @@ import { api } from "./api";
 // Interfaces
 // --------------------
 export interface Webinar {
-  id: string;
+  id: string | number;
   title: string;
   description?: string;
   schedule: string;
-  capacity?: number;
-  price?: number;
-  location?: string;
-  speaker?: string;
-  image?: string;
-  duration?: number;
-  published?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  capacity?: number | null;
+  price?: number | null;
+  location?: string | null;
+  speaker?: string | null;
+  image?: string | null;
+  duration?: number | null;
+  isPublished?: boolean;
+  requiresPayment?: boolean;
+  availableSpots?: number | null;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface WebinarApplication {
-  id: string;
-  webinarId: string;
-  userId: string;
-  status: "Pending" | "Approved" | "Rejected";
-  createdAt: string;
+  id: string | number;
+  webinarId: string | number;
+  userId?: string | number;
+  status: "Applied" | "Approved" | "Rejected" | "Confirmed";
+  createdAt?: string;
+  requiresPayment?: boolean;
+  price?: number | null;
 }
 
 export interface Ticket {
   webinar: Webinar;
   code: string;
-  webinarId: string;
-  userId: string;
+  webinarId: string | number;
+  userId: string | number;
   createdAt: string;
+}
+
+interface ApplyForWebinarResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number | string;
+    webinar_id: number | string;
+    status: string;
+    requiresPayment?: boolean;
+    price?: number | null;
+    ticket?: { id: number | string; code: string; qrCode?: string; issuedAt?: string };
+    availableSpots?: number | null;
+  };
+}
+
+interface InitializePaymentResponse {
+  status: string;
+  message: string;
+  data: {
+    checkout_url?: string; // Chapa usually returns this
+    [key: string]: any;
+  };
 }
 
 // --------------------
@@ -42,31 +70,29 @@ export const webinarService = {
   // ---------- Public ----------
   getUpcomingWebinars: async (): Promise<Webinar[]> => {
     const res = await api.get("/public/webinars");
-    
-    if (!res.data || !res.data.data) {
-      throw new Error('Invalid API response format');
-    }
-    
-    const webinars = res.data.data;
-    if (!Array.isArray(webinars)) {
-      throw new Error('Expected an array of webinars');
-    }
-    
+    const payload = res.data;
+    const webinars = payload?.data ?? payload; // support either wrapped or direct
+    if (!Array.isArray(webinars)) throw new Error("Expected an array of webinars");
     return webinars;
   },
 
   getWebinarById: async (id: string): Promise<Webinar> => {
     const res = await api.get(`/public/webinars/${id}`);
-    return res.data;
+    const payload = res.data;
+    return payload?.data ?? payload; // unwrap if necessary
   },
 
   getTicketByCode: async (code: string): Promise<Ticket> => {
     const res = await api.get(`/public/tickets/${code}`);
-    return res.data;
+    const payload = res.data;
+    return payload?.data ?? payload;
   },
 
   // ---------- User ----------
-  applyForWebinar: async (webinarId: string, answers: Record<string, string | string[]>) => {
+  applyForWebinar: async (
+    webinarId: string | number,
+    answers: Record<string, string | string[]>
+  ): Promise<ApplyForWebinarResponse> => {
     const res = await api.post("/user/webinar-applications", {
       webinar_id: webinarId,
       answers,
@@ -74,19 +100,28 @@ export const webinarService = {
     return res.data;
   },
 
-  checkoutWebinarApplication: async (id: string) => {
+  checkoutWebinarApplication: async (id: string | number) => {
     const res = await api.post(`/user/webinar-applications/${id}/checkout`);
     return res.data;
   },
+  // Deprecated confirm removed – payment handled via payment controller
 
-  confirmWebinarPayment: async (id: string) => {
-    const res = await api.post(`/user/webinar-applications/${id}/confirm`);
+  initializeWebinarPayment: async (
+    webinarId: string | number,
+    amount: number
+  ): Promise<InitializePaymentResponse> => {
+    const res = await api.post("/payment/initialize", {
+      type: "webinar",
+      webinarId: typeof webinarId === 'string' ? Number(webinarId) : webinarId,
+      amount,
+    });
     return res.data;
   },
 
   getUserTickets: async (): Promise<Ticket[]> => {
     const res = await api.get("/user/tickets/me");
-    return res.data.data;
+    const payload = res.data;
+    return payload?.data ?? payload;
   },
 
   // ---------- Admin ----------
@@ -111,6 +146,11 @@ export const webinarService = {
 
   publishWebinar: async (id: string, publish: boolean): Promise<Webinar> => {
     const res = await api.post(`/admin/webinars/${id}/publish`, { publish });
+    return res.data;
+  },
+
+  deleteWebinar: async (id: string | number): Promise<{ success: boolean; message: string }> => {
+    const res = await api.delete(`/admin/webinars/${id}`);
     return res.data;
   },
 
