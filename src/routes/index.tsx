@@ -14,8 +14,6 @@ import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
-
-// 👉 import your auth pages
 import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
 import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
 import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
@@ -26,6 +24,13 @@ import UserPlans from '@/pages/portal/UserPlane';
 import UserCreateStartup from '@/pages/portal/UserCreatStartupp';
 import AdminGetStartups from '@/pages/portal/AdminGetStartups';
 import UserGetStartup from '@/pages/portal/UserGetStartup';
+import UsersPage from '@/pages/admin/UsersPage';
+import AdminArticles from '@/pages/admin/AdminArticlesPage';
+import ArticlesPage from '@/pages/public/articles/ArticlesPage';
+import { ArticlePage } from '@/pages/public/articles/ArticlePage';
+import PostArticlePage from '@/pages/admin/PostArticlePage';
+import EditArticlePage from '@/pages/admin/EditArticlePage';
+import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -71,6 +76,18 @@ export const publicRoutes: AppRoute[] = [
     element: <OAuthCallbackPage />,
   },
   {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/oauth-callback',
+    element: <OAuthCallbackPage />,
+  },
+  {
     path: '/projects',
     element: <ProjectsPage />,
   }
@@ -88,7 +105,7 @@ export const dashboardRoutes: AppRoute[] = [
       },
       {
         path: 'users',
-        element: createProtectedRoute(<div>Users Page</div>, ['ADMIN']),
+        element: createProtectedRoute(<UsersPage />, ['ADMIN']),
       },
       {
         path: 'webinars',
@@ -136,11 +153,31 @@ export const dashboardRoutes: AppRoute[] = [
       },
       {
         path: 'articles',
-        element: createProtectedRoute(<div>Articles Page</div>, ['USER', 'ADMIN']),
+        element: createProtectedRoute(<ArticlesPage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'articles/:slug',
+        element: createProtectedRoute(<ArticlePage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'admin-articles',
+        element: createProtectedRoute(<AdminArticles />, ['ADMIN']),
+      },
+      {
+        path: 'admin-articles/create',
+        element: createProtectedRoute(<PostArticlePage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-articles/:id/edit',
+        element: createProtectedRoute(<EditArticlePage />, ['ADMIN']),
       },
       {
         path: 'settings',
-        element: createProtectedRoute(<div>Account Settings</div>, ['USER', 'ADMIN']),
+        element: createProtectedRoute(<AccountSettingsPage />, ['USER', 'ADMIN']),
+      },
+      {
+        path: 'change-password',
+        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
       },
       {
         path: 'change-password',
