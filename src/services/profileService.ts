@@ -74,8 +74,7 @@ const transformAvatarUrl = (avatarUrl: string | undefined): string => {
   if (avatarUrl.startsWith('http')) return avatarUrl;
   
   if (avatarUrl.startsWith('/uploads/')) {
-    const filename = avatarUrl.replace('/uploads/', '');
-    return `http://localhost:3000/uploads/upload/Images/profile/${filename}`;
+    return `http://localhost:3000${avatarUrl}`;
   }
   
   return avatarUrl;
