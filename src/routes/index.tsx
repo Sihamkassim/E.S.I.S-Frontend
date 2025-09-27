@@ -26,8 +26,10 @@ import AdminGetStartups from '@/pages/portal/AdminGetStartups';
 import UserGetStartup from '@/pages/portal/UserGetStartup';
 import UsersPage from '@/pages/admin/UsersPage';
 import AdminArticles from '@/pages/admin/AdminArticlesPage';
-import ArticlesPage from '@/pages/public/articles/ArticlesPage';
-import { ArticlePage } from '@/pages/public/articles/ArticlePage';
+import TechUpdatesPage from '@/pages/public/articles/TechUpdatesPage';
+import { TechUpdatePage } from '@/pages/public/articles/TechUpdatePage';
+import { ArticlePage } from '@/pages/portal/ArticlePage';
+import ArticlesPage from '@/pages/portal/ArticlesPage';
 import PostArticlePage from '@/pages/admin/PostArticlePage';
 import EditArticlePage from '@/pages/admin/EditArticlePage';
 import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
@@ -54,6 +56,14 @@ export const publicRoutes: AppRoute[] = [
   {
     path: '/webinars',
     element: <WebinarsPage />,
+  },
+  {
+    path: '/tech-updates',
+    element: <TechUpdatesPage />,
+  },
+  {
+    path: 'tech-updates/:slug',
+    element: <TechUpdatePage />,
   },
   {
     path: '/login',
