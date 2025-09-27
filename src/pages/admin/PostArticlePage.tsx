@@ -8,7 +8,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Loader2, ArrowLeft, Save, Send, Upload, X, Image as ImageIcon, Tag as TagIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Upload, X, Image as ImageIcon, Tag as TagIcon } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
 
 const PostArticlePage = () => {
@@ -109,7 +109,7 @@ const PostArticlePage = () => {
       tags: tagNames,
       metaTitle: article.metaTitle || "",
       metaDescription: article.metaDescription || "",
-      status: article.status || "DRAFT",
+      status: 'DRAFT', // Always set to DRAFT when loading
       publishAt: article.publishedAt
         ? new Date(article.publishedAt).toISOString().slice(0, 16)
         : "",
@@ -230,7 +230,7 @@ const PostArticlePage = () => {
     }
   };
 
-  const handleSubmit = async (publish: boolean = false) => {
+  const handleSaveDraft = async () => {
     try {
       setSubmitting(true);
       setError('');
@@ -244,7 +244,7 @@ const PostArticlePage = () => {
         return;
       }
 
-      // Prepare submit data
+      // Always save as draft - override any status selection
       const submitData: CreateArticleData | UpdateArticleData = {
         title: title,
         content: content,
@@ -253,8 +253,8 @@ const PostArticlePage = () => {
         tags: formData.tags.filter(tag => tag.trim()),
         metaTitle: formData.metaTitle?.trim() || undefined,
         metaDescription: formData.metaDescription?.trim() || undefined,
-        status: publish ? 'PUBLISHED' : formData.status,
-        publishAt: formData.publishAt || undefined,
+        status: 'DRAFT', // Force DRAFT status
+        publishAt: undefined, // Clear publish date since we're saving as draft
         featuredImage: featuredImage || undefined,
       };
 
@@ -262,34 +262,26 @@ const PostArticlePage = () => {
 
       if (isEditing && originalArticle) {
         result = await articleService.updateArticle(originalArticle.id, submitData as UpdateArticleData);
-        setSuccess(publish ? 'Article published successfully!' : 'Article updated successfully!');
-        
-        if (!publish) {
-          // Update local state for editing
-          setOriginalArticle(result);
-          setFeaturedImage(null); // Reset featured image state after successful update
-        }
+        setSuccess('Draft saved successfully!');
+        setOriginalArticle(result);
       } else {
         result = await articleService.createArticle(submitData as CreateArticleData);
-        setSuccess(publish ? 'Article published successfully!' : 'Article created successfully!');
+        setSuccess('Draft created successfully!');
+        
+        // Redirect to edit page for the new article
+        setTimeout(() => {
+          navigate("../../dashboard/admin-articles");
+        }, 1500);
       }
 
-      if (publish) {
-        setTimeout(() => {
-          navigate(`/articles/${result.slug}`);
-        }, 2000);
-      }
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to save article';
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to save draft';
       setError(errorMessage);
-      console.error('Error saving article:', err);
+      console.error('Error saving draft:', err);
     } finally {
       setSubmitting(false);
     }
   };
-
-  const handlePublish = () => handleSubmit(true);
-  const handleSaveDraft = () => handleSubmit(false);
 
   // Check if there are changes (for editing mode)
   const hasChanges = () => {
@@ -313,10 +305,7 @@ const PostArticlePage = () => {
       JSON.stringify(currentTags.sort()) !== JSON.stringify(originalTagNames.sort()) ||
       formData.metaTitle !== (originalArticle.metaTitle || '') ||
       formData.metaDescription !== (originalArticle.metaDescription || '') ||
-      formData.status !== originalArticle.status ||
-      featuredImage !== null ||
-      (formData.publishAt && formData.publishAt !== (originalArticle.publishedAt ? 
-        new Date(originalArticle.publishedAt).toISOString().slice(0, 16) : ''))
+      featuredImage !== null
     );
   };
 
@@ -349,33 +338,21 @@ const PostArticlePage = () => {
             </Button>
             <div>
               <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {isEditing ? 'Edit Article' : 'Create New Article'}
+                {isEditing ? 'Edit Draft' : 'Create New Draft'}
               </h1>
               <p className={`mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                {isEditing ? 'Update your article content and settings' : 'Write and publish a new article'}
+                {isEditing ? 'Update your draft content' : 'Create a new draft article'}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline"
               onClick={handleSaveDraft}
               disabled={submitting || (isEditing && !hasChanges())}
-              className={theme === 'dark' ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}
-            >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-              {isEditing ? 'Save Changes' : 'Save Draft'}
-            </Button>
-            <Button
-              onClick={handlePublish}
-              disabled={submitting}
               className="bg-primary hover:bg-primary-dark text-white"
             >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
-              {isEditing 
-                ? (formData.status === 'PUBLISHED' ? 'Update Published' : 'Publish Now')
-                : 'Publish'
-              }
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              {isEditing ? 'Save Draft' : 'Create Draft'}
             </Button>
           </div>
         </div>
@@ -414,9 +391,9 @@ const PostArticlePage = () => {
                   </span>
                 </div>
                 <div>
-                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Slug:</span>
+                  <span className={`font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Status:</span>
                   <span className={`ml-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {originalArticle.slug}
+                    Draft
                   </span>
                 </div>
               </div>
@@ -689,37 +666,15 @@ const PostArticlePage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Status
-                  </label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: 'DRAFT' | 'PUBLISHED' | 'SCHEDULED') => handleInputChange('status', value)}
-                  >
-                    <SelectTrigger className={theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className={theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-300'}>
-                      <SelectItem value="DRAFT">Draft</SelectItem>
-                      <SelectItem value="PUBLISHED">Published</SelectItem>
-                      <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {formData.status === 'SCHEDULED' && (
-                  <div className="space-y-2">
-                    <label htmlFor="publishAt" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Publish Date
-                    </label>
-                    <Input
-                      type="datetime-local"
-                      value={formData.publishAt}
-                      onChange={(e) => handleInputChange('publishAt', e.target.value)}
-                      className={theme === 'dark' ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                    />
+                  <div className={`p-3 rounded-md ${theme === 'dark' ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
+                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>
+                      This article will be saved as a draft
+                    </p>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                      You can publish it later from the drafts list.
+                    </p>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
 
