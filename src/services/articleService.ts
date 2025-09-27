@@ -1,6 +1,18 @@
 import { api } from './api';
 
-// http://localhost:3000/uploads/projects/temp/1758697312044-91897894-Screenshot_2024-10-30_070213.png 
+// Transform database image path to full URL
+const transformImageUrl = (imagePath: string | undefined): string | undefined => {
+  if (!imagePath) return undefined;
+  
+  if (imagePath.startsWith('http')) return imagePath;
+  
+  if (imagePath.startsWith('/uploads/')) {
+    return `http://localhost:3000${imagePath}`;
+  }
+  
+  // If it's just a filename without path, construct the full URL
+  return `http://localhost:3000/uploads/articles/${imagePath}`;
+};
 
 export interface Article {
   id: number;
@@ -94,6 +106,23 @@ export interface TagsResponse {
   data: Tag[];
 }
 
+// Helper function to transform article data
+const transformArticle = (article: any): Article => ({
+  ...article,
+  featuredImage: transformImageUrl(article.featuredImage),
+  author: article.author ? {
+    ...article.author,
+    profile: article.author.profile ? {
+      ...article.author.profile,
+      avatarUrl: transformImageUrl(article.author.profile.avatarUrl)
+    } : undefined
+  } : undefined
+});
+
+// Helper function to transform article list
+const transformArticleList = (articles: any[]): Article[] => 
+  articles.map(article => transformArticle(article));
+
 export const articleService = {
   // Public endpoints
   getArticles: async (filters: ArticleFilters = {}): Promise<ArticleListResponse> => {
@@ -106,17 +135,22 @@ export const articleService = {
     if (filters.limit) params.append('limit', filters.limit.toString());
 
     const response = await api.get<ArticleListResponse>(`/public/articles?${params.toString()}`);
-    return response.data;
+    
+    // Transform the featuredImage URLs in the response
+    return {
+      ...response.data,
+      data: transformArticleList(response.data.data)
+    };
   },
 
   getArticleBySlug: async (slug: string): Promise<Article> => {
     const response = await api.get<Article>(`/public/articles/${slug}`);
-    return response.data;
+    return transformArticle(response.data);
   },
 
   getRelatedArticles: async (articleId: number): Promise<Article[]> => {
     const response = await api.get<Article[]>(`/public/articles/${articleId}/related`);
-    return response.data;
+    return transformArticleList(response.data);
   },
 
   // Admin endpoints
@@ -145,69 +179,58 @@ export const articleService = {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return response.data;
+    return transformArticle(response.data);
   },
 
   updateArticle: async (id: number, data: UpdateArticleData): Promise<Article> => {
-  const formData = new FormData();
-  
-  // Append basic fields
-  if (data.title !== undefined) formData.append('title', data.title);
-  if (data.content !== undefined) formData.append('content', data.content);
-  if (data.summary !== undefined) formData.append('summary', data.summary || '');
-  if (data.categoryId !== undefined) formData.append('categoryId', data.categoryId?.toString() || '');
-  
-  // Handle tags conversion from names to IDs
-  if (data.tags !== undefined) {
-    try {
-      // Get all available tags first
-      const allTags = await articleService.getTags();
-      
-      // Convert tag names to tag IDs
-      const tagIds = data.tags
-        .map(tagName => {
-          const foundTag = allTags.find(tag => 
-            tag.name.toLowerCase() === tagName.toLowerCase()
-          );
-          return foundTag?.id || null;
-        })
-        .filter((id): id is number => id !== null);
+    const formData = new FormData();
+    
+    // Append basic fields
+    if (data.title !== undefined) formData.append('title', data.title);
+    if (data.content !== undefined) formData.append('content', data.content);
+    if (data.summary !== undefined) formData.append('summary', data.summary || '');
+    if (data.categoryId !== undefined) formData.append('categoryId', data.categoryId?.toString() || '');
+    
+    // Handle tags
+    if (data.tags !== undefined) {
+      try {
+        const allTags = await articleService.getTags();
+        const tagIds = data.tags
+          .map(tagName => {
+            const foundTag = allTags.find(tag => 
+              tag.name.toLowerCase() === tagName.toLowerCase()
+            );
+            return foundTag?.id || null;
+          })
+          .filter((id): id is number => id !== null);
 
-      console.log('Tag conversion:', {
-        inputTags: data.tags,
-        outputTagIds: tagIds,
-        availableTags: allTags.map(t => ({ id: t.id, name: t.name }))
-      });
-
-      // Send tag IDs to backend
-      formData.append('tags', JSON.stringify(tagIds));
-    } catch (error) {
-      console.error('Error converting tags:', error);
-      // Fallback: send empty array if tag conversion fails
-      formData.append('tags', JSON.stringify([]));
+        formData.append('tags', JSON.stringify(tagIds));
+      } catch (error) {
+        console.error('Error converting tags:', error);
+        formData.append('tags', JSON.stringify([]));
+      }
     }
-  }
-  
-  if (data.metaTitle !== undefined) formData.append('metaTitle', data.metaTitle || '');
-  if (data.metaDescription !== undefined) formData.append('metaDescription', data.metaDescription || '');
-  if (data.status !== undefined) formData.append('status', data.status);
-  if (data.publishAt !== undefined) formData.append('publishAt', data.publishAt || '');
-  
-  if (data.featuredImage) {
-    formData.append('featuredImage', data.featuredImage);
-  }
+    
+    if (data.metaTitle !== undefined) formData.append('metaTitle', data.metaTitle || '');
+    if (data.metaDescription !== undefined) formData.append('metaDescription', data.metaDescription || '');
+    if (data.status !== undefined) formData.append('status', data.status);
+    if (data.publishAt !== undefined) formData.append('publishAt', data.publishAt || '');
+    
+    if (data.featuredImage instanceof File) {
+      formData.append('featuredImage', data.featuredImage);
+    }
 
-  const response = await api.patch<Article>(`/admin/articles/${id}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
-},
+    const response = await api.patch<Article>(`/admin/articles/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return transformArticle(response.data);
+  },
 
   publishArticle: async (id: number): Promise<Article> => {
-    const response = await api.patch<Article>(`/admin/articles/${id}/publish`);
-    return response.data;
+    const response = await api.post<Article>(`/admin/articles/${id}/publish`);
+    return transformArticle(response.data);
   },
 
   deleteArticle: async (id: number): Promise<{ message: string }> => {
@@ -226,7 +249,12 @@ export const articleService = {
     if (filters.limit) params.append('limit', filters.limit.toString());
 
     const response = await api.get<ArticleListResponse>(`/admin/articles?${params.toString()}`);
-    return response.data;
+    
+    // Transform the featuredImage URLs in the response
+    return {
+      ...response.data,
+      data: transformArticleList(response.data.data)
+    };
   },
 
   getTags: async (): Promise<Tag[]> => {
@@ -235,7 +263,7 @@ export const articleService = {
       return response.data.data;
     } catch (error) {
       console.error('Error fetching tags:', error);
-      return []; // Return empty array if fetch fails
+      return [];
     }
   },
 };
