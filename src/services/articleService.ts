@@ -206,7 +206,7 @@ export const articleService = {
 },
 
   publishArticle: async (id: number): Promise<Article> => {
-    const response = await api.patch<Article>(`/admin/articles/${id}/publish`);
+    const response = await api.post<Article>(`/admin/articles/${id}/publish`);
     return response.data;
   },
 
