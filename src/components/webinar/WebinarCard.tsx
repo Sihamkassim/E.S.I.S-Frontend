@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { Webinar, useWebinarStore } from '../../store/useWebinarstore';
@@ -18,14 +18,20 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
   const ticket = getTicketForWebinar(webinar.id);
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const { initializeWebinarPayment } = useWebinarStore();
+  const paymentInitWebinarId = useWebinarStore(s => s.paymentInitWebinarId);
+  const applyingWebinarId = useWebinarStore(s => s.applyingWebinarId);
+  const userApplications = useWebinarStore(s => s.userWebinarApplications) || [];
 
-  if (!webinar || !webinar.title || !webinar.schedule) {
-    return (
-      <div className="bg-white/10 dark:bg-gray-800/30 backdrop-blur-md rounded-xl p-6 shadow-md border border-white/20 w-[280px] h-[320px] flex items-center justify-center">
-        <p className="text-gray-200 text-center">Incomplete webinar data</p>
-      </div>
-    );
-  }
+  const pendingPaidApplication = useMemo(() => {
+    return userApplications.find(a => {
+      const same = a.webinarId.toString() === webinar.id.toString();
+      if (!same) return false;
+      const status = (a.status || '').toString();
+      const needsPayment = a.requiresPayment || webinar.requiresPayment;
+      return needsPayment && (status === 'Applied' || status === 'Approved');
+    });
+  }, [userApplications, webinar.id, webinar.requiresPayment]);
 
   const handleRegisterClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,6 +45,20 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
   const handleViewTicket = (e: React.MouseEvent) => {
     e.preventDefault();
     if (ticket) setShowTicketModal(true);
+  };
+
+  const handleMakePayment = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!pendingPaidApplication || !webinar.price) return;
+    try {
+      const paymentInit = await initializeWebinarPayment?.(webinar.id, webinar.price);
+      const checkoutUrl = paymentInit?.data?.checkout_url || paymentInit?.data?.data?.checkout_url;
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (err) {
+      console.error('Payment init failed', err);
+    }
   };
 
   const formatDate = (dateString: string): string => {
@@ -127,7 +147,7 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
             </p>
           )}
 
-          {/* Transparent Button */}
+          {/* Buttons logic */}
           {ticket ? (
             <button
               onClick={handleViewTicket}
@@ -135,12 +155,21 @@ const WebinarCard: React.FC<WebinarCardProps> = ({ webinar }) => {
             >
               View Ticket
             </button>
+          ) : pendingPaidApplication ? (
+            <button
+              onClick={handleMakePayment}
+              disabled={paymentInitWebinarId === webinar.id || applyingWebinarId === webinar.id}
+              className="w-full px-4 py-2 rounded-md border border-yellow-400 text-yellow-200 bg-yellow-900/30 hover:bg-yellow-900/50 disabled:opacity-60 transition"
+            >
+              {paymentInitWebinarId === webinar.id ? 'Redirecting...' : 'Make Payment'}
+            </button>
           ) : (
             <button
               onClick={handleRegisterClick}
-              className="w-full px-4 py-2 rounded-md border border-white/40 text-white hover:bg-white/20 transition"
+              disabled={applyingWebinarId === webinar.id}
+              className="w-full px-4 py-2 rounded-md border border-white/40 text-white hover:bg-white/20 disabled:opacity-60 transition"
             >
-              Register Now
+              {applyingWebinarId === webinar.id ? 'Submitting...' : 'Register Now'}
             </button>
           )}
         </div>

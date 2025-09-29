@@ -124,6 +124,12 @@ export const webinarService = {
     return payload?.data ?? payload;
   },
 
+  getUserWebinars: async (): Promise<{ applications: any[]; tickets: any[] }> => {
+    const res = await api.get('/user/webinars/me');
+    const payload = res.data?.data || res.data;
+    return { applications: payload.applications || [], tickets: payload.tickets || [] };
+  },
+
   // ---------- Admin ----------
   getAdminWebinars: async (): Promise<Webinar[]> => {
     const res = await api.get("/admin/webinars");
