@@ -403,7 +403,7 @@ const EditArticlePage: React.FC = () => {
               variant="outline"
               size="icon"
               onClick={() => navigate('/dashboard/admin-articles')}
-              className={theme === 'dark' ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}
+              className={theme === 'dark' ? 'border-gray-700 hover:bg-gray-800 text-white/80' : 'border-gray-300 hover:bg-gray-100'}
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
@@ -421,7 +421,7 @@ const EditArticlePage: React.FC = () => {
               variant="outline"
               onClick={handleSave}
               disabled={submitting || !hasChanges()}
-              className={theme === 'dark' ? 'border-gray-700 hover:bg-gray-800' : 'border-gray-300 hover:bg-gray-100'}
+              className={theme === 'dark' ? 'border-gray-700 hover:bg-gray-800 text-white/80' : 'border-gray-300 hover:bg-gray-100'}
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               Save Changes
