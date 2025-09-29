@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ApplicationForm from '../../components/internships/ApplicationForm';
 import ApplicationStatusModal from '../../components/internships/ApplicationStatusModal';
+import { useTheme } from '../../hooks/useTheme';
 import { InternshipApplication, InternshipPosition } from '../../services/internshipService';
 import { useInternshipStore } from '../../store/internshipStore';
 
@@ -37,22 +38,22 @@ const InternshipCard: React.FC<CardProps> = ({ position, application, onApply })
   const truncatedResp = responsibilities.length > 120 && !open ? responsibilities.slice(0, 120) + '…' : responsibilities;
   const isDraftPosition = position.status === 'DRAFT';
   return (
-    <article className="bg-white border rounded-lg p-5 shadow-sm flex flex-col gap-3" aria-labelledby={`int-${position.id}-title`}>
+  <article className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm flex flex-col gap-4 transition-colors" aria-labelledby={`int-${position.id}-title`}>
       <div className="flex justify-between items-start">
         <div className="flex gap-2 items-center flex-wrap">
           {position.status === 'PUBLISHED' && !application && <StatusBadge status="New" />}
           {application && <StatusBadge status={application.status} />}
           {position.status === 'CLOSED' && <StatusBadge status="Closed" />}
           {isDraftPosition && <StatusBadge status="Draft" />}
-          <h3 id={`int-${position.id}-title`} className="font-semibold text-sm">{position.title}</h3>
+          <h3 id={`int-${position.id}-title`} className="font-semibold text-base leading-snug text-slate-800 dark:text-slate-100">{position.title}</h3>
         </div>
-        <div className="text-xs text-slate-600 font-medium flex flex-col items-end">
+  <div className="text-[13px] text-slate-600 dark:text-slate-400 font-medium flex flex-col items-end">
           {deadline && <span>Deadline: {deadline.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>}
           {dateRange && <span className="text-[10px] text-slate-400">{dateRange}</span>}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-[11px]">
+  <div className="flex flex-wrap gap-2 text-xs">
         {position.isRemote && <span className="px-2 py-1 bg-indigo-50 text-indigo-600 rounded">Remote</span>}
         {!position.isRemote && position.location && <span className="px-2 py-1 bg-slate-50 text-slate-600 rounded">{position.location}</span>}
         {position.isPaid && <span className="px-2 py-1 bg-emerald-50 text-emerald-600 rounded">Paid</span>}
@@ -63,23 +64,23 @@ const InternshipCard: React.FC<CardProps> = ({ position, application, onApply })
       </div>
 
       {description && (
-        <p className="text-xs leading-relaxed text-slate-600 whitespace-pre-line">
+  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300 whitespace-pre-line">
           {truncatedDesc}
         </p>
       )}
       {requirements && (
-        <p className="text-[11px] text-slate-500"><span className="font-medium text-slate-600">Requirements:</span> {truncatedReq}</p>
+  <p className="text-xs text-slate-500 dark:text-slate-400"><span className="font-medium text-slate-600 dark:text-slate-300">Requirements:</span> {truncatedReq}</p>
       )}
       {responsibilities && (
-        <p className="text-[11px] text-slate-500"><span className="font-medium text-slate-600">Responsibilities:</span> {truncatedResp}</p>
+  <p className="text-xs text-slate-500 dark:text-slate-400"><span className="font-medium text-slate-600 dark:text-slate-300">Responsibilities:</span> {truncatedResp}</p>
       )}
       {(description.length > 140 || requirements.length > 100 || responsibilities.length > 120) && (
-        <button onClick={() => setOpen(o => !o)} className="self-start text-[11px] text-blue-600 hover:underline">
+  <button onClick={() => setOpen(o => !o)} className="self-start text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
           {open ? 'Show less' : 'Show more'}
         </button>
       )}
 
-      <div className="mt-1 flex justify-between items-center pt-2 border-t">
+  <div className="mt-1 flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-700">
         {application ? (
           <button
             onClick={() => onApply(position)}
@@ -92,7 +93,7 @@ const InternshipCard: React.FC<CardProps> = ({ position, application, onApply })
           <button
             disabled={position.status !== 'PUBLISHED'}
             onClick={() => onApply(position)}
-            className={`text-xs border rounded px-3 py-1 font-medium transition ${position.status !== 'PUBLISHED' ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+            className={`text-sm border rounded-md px-4 py-2 font-medium transition ${position.status !== 'PUBLISHED' ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400'}`}
             aria-disabled={position.status !== 'PUBLISHED'}
             aria-label={position.status !== 'PUBLISHED' ? 'Position not open for applications' : 'Apply for this internship'}
           >
@@ -148,38 +149,77 @@ const UserInternships: React.FC = () => {
     }
   };
 
+  const { theme } = useTheme();
+  const [view, setView] = useState<'grid'|'list'>('grid');
+  // Pagination
+  const [page, setPage] = useState(1);
+  const pageSize = 4;
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const paginatedPositions = filtered.slice((page-1)*pageSize, page*pageSize);
+  // Applications pagination
+  const [appPage, setAppPage] = useState(1);
+  const appPageSize = 4;
+  const totalAppPages = Math.ceil(applications.length / appPageSize);
+  const paginatedApps = applications.slice((appPage-1)*appPageSize, appPage*appPageSize);
+
   return (
-    <div className="p-6 space-y-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Internships</h1>
-          <p className="text-sm text-slate-500">Browse open positions and manage your applications</p>
-        </div>
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
-            placeholder="Search role"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="border rounded px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <select className="border rounded px-2 py-2 text-sm">
-            <option>Deadline</option>
-            <option value="latest">Latest</option>
-            <option value="soonest">Soonest</option>
-          </select>
+    <div className={`p-6 space-y-10 min-h-screen transition-colors duration-300 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100`}>
+      <div>
+        <h1 className="text-2xl font-bold">Internships</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Track and manage your internships</p>
+        {/* Toolbar under heading */}
+        <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2">
+            {/* View toggle icons */}
+            <button
+              type="button"
+              aria-label="List view"
+              onClick={()=>setView('list')}
+              className={`h-9 w-9 inline-flex items-center justify-center rounded-md border text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition ${view==='list' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white hover:bg-blue-600/90' : ''}`}
+            >
+              {/* List Icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              aria-label="Grid view"
+              onClick={()=>setView('grid')}
+              className={`h-9 w-9 inline-flex items-center justify-center rounded-md border text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition ${view==='grid' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white hover:bg-blue-600/90' : ''}`}
+            >
+              {/* Grid Icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" />
+              </svg>
+            </button>
+          </div>
+          <div className="flex gap-2 items-center">
+            <input
+              type="text"
+              placeholder="Search role"
+              value={search}
+              onChange={e => {setPage(1); setSearch(e.target.value);}}
+              className="border border-slate-200 dark:border-slate-700 rounded px-3 py-2 text-sm w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+            />
+            <select className="border border-slate-200 dark:border-slate-700 rounded px-2 py-2 text-sm dark:bg-slate-800 dark:text-slate-100">
+              <option>Deadline</option>
+              <option value="latest">Latest</option>
+              <option value="soonest">Soonest</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold">All Positions</h2>
-        <div className="grid gap-4">
+  <h2 className="text-xl font-semibold tracking-tight">All Positions</h2>
+        <div className={view==='grid' ? 'grid gap-4 md:grid-cols-2' : 'flex flex-col gap-4'}>
           {(loadingPositions || loadingApplications) && positions.length === 0 && (
             <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-28 bg-slate-100 animate-pulse rounded" />)}
+              {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-28 bg-slate-100 dark:bg-slate-800/60 animate-pulse rounded" />)}
             </div>
           )}
-          {!loadingPositions && filtered.map(p => (
+          {!loadingPositions && paginatedPositions.map(p => (
             <InternshipCard
               key={p.id}
               position={p}
@@ -187,41 +227,61 @@ const UserInternships: React.FC = () => {
               onApply={handleApply}
             />
           ))}
-          {!loadingPositions && filtered.length === 0 && (
-            <div className="text-sm text-slate-500 py-6 text-center">No internships found.</div>
+          {!loadingPositions && paginatedPositions.length === 0 && (
+            <div className="text-sm text-slate-500 dark:text-slate-400 py-6 text-center">No internships found.</div>
           )}
           {error && <div className="text-sm text-red-600">{error}</div>}
         </div>
+        {/* Pagination controls */}
+        {totalPages > 1 && (
+          <div className="flex gap-2 justify-center mt-4">
+            <button disabled={page===1} onClick={()=>setPage(page-1)} className="px-2 py-1 border rounded disabled:opacity-50 border-slate-200 dark:border-slate-700">Prev</button>
+            {Array.from({length:totalPages}).map((_,i)=>(
+              <button key={i} onClick={()=>setPage(i+1)} className={`px-2 py-1 border rounded border-slate-200 dark:border-slate-700 ${page===i+1?'bg-blue-600 text-white dark:bg-blue-500':''}`}>{i+1}</button>
+            ))}
+            <button disabled={page===totalPages} onClick={()=>setPage(page+1)} className="px-2 py-1 border rounded disabled:opacity-50 border-slate-200 dark:border-slate-700">Next</button>
+          </div>
+        )}
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold">My Applications</h2>
+  <h2 className="text-xl font-semibold tracking-tight">My Applications</h2>
         <div className="grid gap-4">
-          {applications.length === 0 && <div className="text-sm text-slate-500 py-4">You haven't started any applications yet.</div>}
-          {applications.map(app => {
+          {applications.length === 0 && <div className="text-sm text-slate-500 dark:text-slate-400 py-4">You haven't started any applications yet.</div>}
+          {paginatedApps.map(app => {
             const pos = app.internshipId ? positions.find(p => p.id === app.internshipId) : undefined;
             return (
-              <div key={app.id} className="border rounded-lg p-4 bg-white flex flex-col gap-2">
+              <div key={app.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-5 bg-white dark:bg-slate-800 flex flex-col gap-3 transition-colors">
                 <div className="flex justify-between items-start">
                   <div className="flex gap-2 items-center">
                     <StatusBadge status={app.status} />
-                    <h3 className="font-medium text-sm">{pos?.title || 'General Application'}</h3>
+                    <h3 className="font-medium text-base leading-snug">{pos?.title || 'General Application'}</h3>
                   </div>
-                  <span className="text-xs text-slate-500">{new Date(app.createdAt).toLocaleDateString()}</span>
+                  <span className="text-[13px] text-slate-500 dark:text-slate-400">{new Date(app.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div className="text-xs text-slate-500">{pos?.department || pos?.location || ''}</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">{pos?.department || pos?.location || ''}</div>
                 <div className="flex gap-2 mt-2">
                   {app.status === 'Draft' && (
-                    <button onClick={() => setActiveAppId(app.id)} className="text-xs px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">Continue</button>
+                    <button onClick={() => setActiveAppId(app.id)} className="text-sm px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Continue</button>
                   )}
                   {app.status !== 'Draft' && (
-                    <button onClick={() => setActiveStatusAppId(app.id)} className="text-xs px-3 py-1 rounded border">View status</button>
+                    <button onClick={() => setActiveStatusAppId(app.id)} className="text-sm px-4 py-2 rounded-md border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700/40">View status</button>
                   )}
                 </div>
               </div>
             );
           })}
         </div>
+        {/* Applications pagination */}
+        {totalAppPages > 1 && (
+          <div className="flex gap-2 justify-center mt-4">
+            <button disabled={appPage===1} onClick={()=>setAppPage(appPage-1)} className="px-2 py-1 border rounded disabled:opacity-50 border-slate-200 dark:border-slate-700">Prev</button>
+            {Array.from({length:totalAppPages}).map((_,i)=>(
+              <button key={i} onClick={()=>setAppPage(i+1)} className={`px-2 py-1 border rounded border-slate-200 dark:border-slate-700 ${appPage===i+1?'bg-blue-600 text-white dark:bg-blue-500':''}`}>{i+1}</button>
+            ))}
+            <button disabled={appPage===totalAppPages} onClick={()=>setAppPage(appPage+1)} className="px-2 py-1 border rounded disabled:opacity-50 border-slate-200 dark:border-slate-700">Next</button>
+          </div>
+        )}
       </section>
 
       {toast && <div className="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-2 rounded text-sm shadow">{toast}</div>}
