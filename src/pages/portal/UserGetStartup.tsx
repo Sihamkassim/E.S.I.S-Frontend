@@ -62,7 +62,7 @@ const UserGetStartups: React.FC = () => {
             const params: any = {};
             if (statusFilter && statusFilter !== 'all') params.status = statusFilter;
 
-            const response = await api.get('/user/startups', { params });
+            const response = await api.get('/user/get-startup', { params });
             setStartups(response.data);
         } catch (error: any) {
             toast.error(`Failed to fetch startups: ${error.response?.data?.error || error.message}`);

@@ -13,6 +13,7 @@ const UserWebinars: React.FC = () => {
     error, 
     fetchUpcomingWebinars,
     fetchUserTickets,
+    fetchUserWebinars,
   } = useWebinarStore();
 
   const [activeTab, setActiveTab] = React.useState('upcoming');
@@ -20,16 +21,18 @@ const UserWebinars: React.FC = () => {
 
   useEffect(() => {
     if (activeTab === 'upcoming') {
-      // fetch both so we can show View Ticket button inline
       fetchUpcomingWebinars();
       fetchUserTickets();
+      fetchUserWebinars?.();
     } else if (activeTab === 'registered') {
       fetchUserTickets();
+      fetchUserWebinars?.();
     } else if (activeTab === 'past') {
-      fetchUpcomingWebinars(); // reuse to keep list fresh
+      fetchUpcomingWebinars();
       fetchUserTickets();
+      fetchUserWebinars?.();
     }
-  }, [activeTab, fetchUpcomingWebinars, fetchUserTickets]);
+  }, [activeTab, fetchUpcomingWebinars, fetchUserTickets, fetchUserWebinars]);
 
   const registeredWebinars = useMemo(() => {
     return userTickets.map(ticket => ticket.webinar).filter(Boolean) as Webinar[];

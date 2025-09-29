@@ -1,3 +1,21 @@
+import AdminArticles from '@/pages/admin/AdminArticlesPage';
+import EditArticlePage from '@/pages/admin/EditArticlePage';
+import PostArticlePage from '@/pages/admin/PostArticlePage';
+import UsersPage from '@/pages/admin/UsersPage';
+import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
+import AdminAddPlan from '@/pages/portal/AdminAddPlan';
+import AdminGetStartups from '@/pages/portal/AdminGetStartups';
+import AdminMembership from '@/pages/portal/AdminMembership';
+import AdminPayments from '@/pages/portal/AdminPayment';
+import AdminPlans from '@/pages/portal/AdminPlans';
+import { ArticlePage } from '@/pages/portal/ArticlePage';
+import ArticlesPage from '@/pages/portal/ArticlesPage';
+import UserCreateStartup from '@/pages/portal/UserCreatStartupp';
+import UserGetStartup from '@/pages/portal/UserGetStartup';
+import UserPayment from '@/pages/portal/UserPayment';
+import UserPlans from '@/pages/portal/UserPlane';
+import { TechUpdatePage } from '@/pages/public/articles/TechUpdatePage';
+import TechUpdatesPage from '@/pages/public/articles/TechUpdatesPage';
 import { ReactNode } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { ProtectedRoute } from '../components/ProtectedRoute';
@@ -6,33 +24,19 @@ import AdminProjects from '../pages/portal/AdminProjects';
 import AdminWebinars from '../pages/portal/AdminWebinar';
 import CreateWebinarPage from '../pages/portal/CreateWebinarPage';
 import { DashboardPage } from '../pages/portal/DashboardPage';
+import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
+import UserInternships from '../pages/portal/UserInternships';
 import UserProjects from '../pages/portal/UserProjects';
 import UserWebinars from '../pages/portal/UserWebinars';
+import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
 import { LoginPage } from '../pages/public/LoginPage';
 import { NotFoundPage } from '../pages/public/NotFoundPage';
+import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
+import { VerifyEmailPage } from '../pages/public/OTPPage';
 import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
-import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
-import { ForgotPasswordPage } from '../pages/public/ForgotPasswordPage';
-import { OAuthCallbackPage } from '../pages/public/OAuthCallbackPage';
-import { VerifyEmailPage } from '../pages/public/OTPPage';
-import AdminAddPlan from '@/pages/portal/AdminAddPlan';
-import AdminPlans from '@/pages/portal/AdminPlans';
-import UserPlans from '@/pages/portal/UserPlane';
-import UserCreateStartup from '@/pages/portal/UserCreatStartupp';
-import AdminGetStartups from '@/pages/portal/AdminGetStartups';
-import UserGetStartup from '@/pages/portal/UserGetStartup';
-import UsersPage from '@/pages/admin/UsersPage';
-import AdminArticles from '@/pages/admin/AdminArticlesPage';
-import TechUpdatesPage from '@/pages/public/articles/TechUpdatesPage';
-import { TechUpdatePage } from '@/pages/public/articles/TechUpdatePage';
-import { ArticlePage } from '@/pages/portal/ArticlePage';
-import ArticlesPage from '@/pages/portal/ArticlesPage';
-import PostArticlePage from '@/pages/admin/PostArticlePage';
-import EditArticlePage from '@/pages/admin/EditArticlePage';
-import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
 import CreateInternshipPage from '@/pages/admin/CreateInternshipPage';
 import EditInternshipPage from '@/pages/admin/EditInternshipPage';
 import AdminInternships from '@/pages/admin/AdminInternshipsPage';
@@ -143,7 +147,7 @@ export const dashboardRoutes: AppRoute[] = [
       },
       {
         path: 'internships',
-        element: createProtectedRoute(<div>Internships Page</div>, ['USER']),
+        element: createProtectedRoute(<UserInternships />, ['USER']),
       },
       {
         path: 'membership',
@@ -220,6 +224,18 @@ export const dashboardRoutes: AppRoute[] = [
       {
         path: 'me-startup',
         element: createProtectedRoute(<UserGetStartup />, ['USER']),
+      },
+      {
+        path: 'get-memberships',
+        element: createProtectedRoute(<AdminMembership />, ['ADMIN']),
+      },
+      {
+        path: 'my-payment',
+        element: createProtectedRoute(<UserPayment />, ['USER']),
+      },
+      {
+        path: 'get-payment',
+        element: createProtectedRoute(<AdminPayments />, ['ADMIN']),
       },
       {
         path: 'admin-internships/:id',

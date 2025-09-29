@@ -66,9 +66,22 @@ const navigationItems: NavItem[] = [
   },
   {
     title: 'Memberships',
-    path: '/dashboard/membership',
+    path: '/dashboard/get-memberships',
     icon: <UserCircle className="w-5 h-5" />,
     roles: ['ADMIN']
+  },
+  {
+    title: 'Payments',
+    path: '/dashboard/get-payment',
+    icon: <PanelLeft className="w-5 h-5" />,
+    roles: ['ADMIN']
+  },
+
+  {
+    title: 'My Payments',
+    path: '/dashboard/my-payment',
+    icon: <PanelLeft className="w-5 h-5" />,
+    roles: ['USER']
   },
   {
     title: 'Plans',

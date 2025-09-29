@@ -79,6 +79,9 @@ interface WebinarState {
   webinarApplicants: WebinarApplication[];
   loading: boolean;
   error?: string;
+  applyingWebinarId?: string | number | null;
+  paymentInitWebinarId?: string | number | null;
+  userWebinarApplications?: any[];
 
   // Actions
   fetchUpcomingWebinars: () => Promise<void>;
@@ -97,6 +100,7 @@ interface WebinarState {
   updateWebinar: (webinarId: string, formData: FormData) => Promise<Webinar>;
   // Deprecated approval flow removed for webinars
   clearApplicants: () => void;
+  fetchUserWebinars?: () => Promise<void>;
 }
 
 // Store implementation with persistence
@@ -109,6 +113,9 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
   webinarApplicants: [],
   loading: false,
   error: undefined,
+  applyingWebinarId: null,
+  paymentInitWebinarId: null,
+  userWebinarApplications: [],
 
   fetchUpcomingWebinars: async () => {
     set({ loading: true, error: undefined });
@@ -183,8 +190,32 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
     }
   },
 
+  fetchUserWebinars: async () => {
+    try {
+      const { applications, tickets } = await webinarService.getUserWebinars();
+      set(state => {
+        const normalizedApps = (applications || []).map((a: any) => ({
+          id: a.id,
+          webinarId: a.webinarId || a.webinar?.id,
+          status: a.status,
+          requiresPayment: a.requiresPayment ?? a.webinar?.requiresPayment ?? false,
+          price: a.price ?? a.webinar?.price ?? null,
+          webinar: a.webinar ? { ...a.webinar } : undefined,
+        }));
+        const existingCodes = new Set(state.userTickets.map(t => t.code));
+        const mergedTickets = [
+          ...state.userTickets,
+          ...tickets.filter((t: any) => !existingCodes.has(t.code)),
+        ];
+        return { userWebinarApplications: normalizedApps, userTickets: mergedTickets };
+      });
+    } catch (err: any) {
+      set({ error: err.message });
+    }
+  },
+
   applyForWebinar: async (webinarId: string | number, answers: Record<string, string | string[]>) => {
-    set({ loading: true, error: undefined });
+    set({ applyingWebinarId: webinarId, error: undefined });
     try {
       const resp = await webinarService.applyForWebinar(webinarId, answers);
       const data = resp?.data;
@@ -197,31 +228,39 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
         ticket: data.ticket,
         availableSpots: data.availableSpots,
       };
-      // If a ticket was issued (free webinar path) push into userTickets list with minimal webinar info
       if (data.ticket) {
         set(state => {
           const exists = state.userTickets.some(t => t.code === data.ticket!.code);
-          if (exists) return {};
+          if (exists) return { applyingWebinarId: null };
           return {
+            applyingWebinarId: null,
             userTickets: [
               ...state.userTickets,
               {
                 code: data.ticket!.code,
                 webinarId: webinarId,
-                userId: 0 as any, // unknown; backend can add with future response shape
+                userId: 0 as any,
                 createdAt: data.ticket!.issuedAt || new Date().toISOString(),
                 webinar: state.upcomingWebinars.find(w => w.id.toString() === webinarId.toString()) || { id: webinarId, title: '' } as any,
               },
             ],
           };
         });
+      } else if (data.requiresPayment) {
+        set(state => ({
+          applyingWebinarId: null,
+          userWebinarApplications: [
+            { id: data.id, webinarId: data.webinar_id, status: data.status, requiresPayment: true, price: data.price },
+            ...(state.userWebinarApplications || []).filter(a => a.webinarId.toString() !== webinarId.toString()),
+          ],
+        }));
+      } else {
+        set({ applyingWebinarId: null });
       }
       return result;
     } catch (err: unknown) {
-      set({ error: (err as Error).message });
+      set({ error: (err as Error).message, applyingWebinarId: null });
       throw err;
-    } finally {
-      set({ loading: false });
     }
   },
 
@@ -230,14 +269,14 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
   },
 
   initializeWebinarPayment: async (webinarId: string | number, amount: number) => {
-    set({ loading: true, error: undefined });
+    set({ paymentInitWebinarId: webinarId, error: undefined });
     try {
-      return await webinarService.initializeWebinarPayment(webinarId, amount);
+      const res = await webinarService.initializeWebinarPayment(webinarId, amount);
+      set({ paymentInitWebinarId: null });
+      return res;
     } catch (err: unknown) {
-      set({ error: (err as Error).message });
+      set({ error: (err as Error).message, paymentInitWebinarId: null });
       throw err;
-    } finally {
-      set({ loading: false });
     }
   },
 
