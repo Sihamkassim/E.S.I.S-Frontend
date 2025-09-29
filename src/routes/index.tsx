@@ -33,6 +33,10 @@ import ArticlesPage from '@/pages/portal/ArticlesPage';
 import PostArticlePage from '@/pages/admin/PostArticlePage';
 import EditArticlePage from '@/pages/admin/EditArticlePage';
 import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
+import CreateInternshipPage from '@/pages/admin/CreateInternshipPage';
+import EditInternshipPage from '@/pages/admin/EditInternshipPage';
+import AdminInternships from '@/pages/admin/AdminInternshipsPage';
+import { AdminInternshipPage } from '@/pages/admin/AdminInternshipPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -217,7 +221,22 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'me-startup',
         element: createProtectedRoute(<UserGetStartup />, ['USER']),
       },
-
+      {
+        path: 'admin-internships/:id',
+        element: createProtectedRoute(<AdminInternshipPage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships',
+        element: createProtectedRoute(<AdminInternships />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships/create',
+        element: createProtectedRoute(<CreateInternshipPage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships/:id/edit',
+        element: createProtectedRoute(<EditInternshipPage/>, ['ADMIN']),
+      },
     ],
   },
 ];
