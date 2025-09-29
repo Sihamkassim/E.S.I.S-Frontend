@@ -33,6 +33,9 @@ import ArticlesPage from '@/pages/portal/ArticlesPage';
 import PostArticlePage from '@/pages/admin/PostArticlePage';
 import EditArticlePage from '@/pages/admin/EditArticlePage';
 import AccountSettingsPage from '@/pages/portal/AccountSettingsPage';
+import AdminMembership from '@/pages/portal/AdminMembership';
+import UserPayment from '@/pages/portal/UserPayment';
+import AdminPayments from '@/pages/portal/AdminPayment';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -216,6 +219,18 @@ export const dashboardRoutes: AppRoute[] = [
       {
         path: 'me-startup',
         element: createProtectedRoute(<UserGetStartup />, ['USER']),
+      },
+      {
+        path: 'get-memberships',
+        element: createProtectedRoute(<AdminMembership />, ['ADMIN']),
+      },
+      {
+        path: 'my-payment',
+        element: createProtectedRoute(<UserPayment />, ['USER']),
+      },
+      {
+        path: 'get-payment',
+        element: createProtectedRoute(<AdminPayments />, ['ADMIN']),
       },
 
     ],
