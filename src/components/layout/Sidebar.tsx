@@ -89,12 +89,12 @@ const navigationItems: NavItem[] = [
     icon: <PanelLeft className="w-5 h-5" />,
     roles: ['USER']
   },
-  {
-    title: 'Billing',
-    path: '/dashboard/billing',
-    icon: <CreditCard className="w-5 h-5" />,
-    roles: ['USER']
-  },
+  // {
+  //   title: 'Billing',
+  //   path: '/dashboard/billing',
+  //   icon: <CreditCard className="w-5 h-5" />,
+  //   roles: ['USER']
+  // },
   {
     title: 'Startup Programs',
     path: '/dashboard/me-startup',

@@ -112,9 +112,8 @@ const AdminPayments: React.FC = () => {
     const statusOptions = [
         { value: '', label: 'All Status' },
         { value: 'SUCCESS', label: 'SUCCESS' },
-        { value: 'Pending', label: 'Pending' },
+        { value: 'pending', label: 'Pending' },
         { value: 'FAILED', label: 'FAILED' },
-        { value: 'Cancelled', label: 'Cancelled' }
     ];
 
     const fetchPayments = async () => {
