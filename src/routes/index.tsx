@@ -37,6 +37,10 @@ import ProjectsPage from '../pages/public/ProjectsPage';
 import { PublicPage } from '../pages/public/Public';
 import { RegisterPage } from '../pages/public/RegisterPage';
 import { WebinarsPage } from '../pages/public/WebinarsPage';
+import CreateInternshipPage from '@/pages/admin/CreateInternshipPage';
+import EditInternshipPage from '@/pages/admin/EditInternshipPage';
+import AdminInternships from '@/pages/admin/AdminInternshipsPage';
+import { AdminInternshipPage } from '@/pages/admin/AdminInternshipPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -233,7 +237,22 @@ export const dashboardRoutes: AppRoute[] = [
         path: 'get-payment',
         element: createProtectedRoute(<AdminPayments />, ['ADMIN']),
       },
-
+      {
+        path: 'admin-internships/:id',
+        element: createProtectedRoute(<AdminInternshipPage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships',
+        element: createProtectedRoute(<AdminInternships />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships/create',
+        element: createProtectedRoute(<CreateInternshipPage />, ['ADMIN']),
+      },
+      {
+        path: 'admin-internships/:id/edit',
+        element: createProtectedRoute(<EditInternshipPage/>, ['ADMIN']),
+      },
     ],
   },
 ];
