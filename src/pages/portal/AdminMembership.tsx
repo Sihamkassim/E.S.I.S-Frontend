@@ -105,7 +105,6 @@ const AdminMembership: React.FC = () => {
             ACTIVE: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
             EXPIRED: { color: 'bg-red-100 text-red-800', icon: XCircle },
             PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-            CANCELLED: { color: 'bg-gray-100 text-gray-800', icon: XCircle },
         };
 
         const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.PENDING;
@@ -187,7 +186,6 @@ const AdminMembership: React.FC = () => {
                             <option value="ACTIVE">Active</option>
                             <option value="EXPIRED">Expired</option>
                             <option value="PENDING">Pending</option>
-                            <option value="CANCELLED">Cancelled</option>
                         </select>
                     </div>
 

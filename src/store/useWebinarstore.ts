@@ -5,7 +5,7 @@ import { webinarService } from "../services/webinarServices";
 export interface Webinar {
   id: number | string;
   title: string;
-  description?: string | null; 
+  description?: string | null;
   schedule: string;
   image?: string | null;
   capacity?: number | null;
@@ -42,6 +42,8 @@ export interface WebinarApplication {
       avatar?: string;
       firstName?: string;
       lastName?: string;
+      phone?: number;
+      name?: string;
     }
   };
   id: string | number;
@@ -53,10 +55,10 @@ export interface WebinarApplication {
   // Ticket relation (added by backend include) – optional
   ticket?: (
     | {
-        id: string | number;
-        code: string;
-        issuedAt?: string;
-      }
+      id: string | number;
+      code: string;
+      issuedAt?: string;
+    }
     | { id: string | number; code: string; issuedAt?: string }[]
   ) | null;
 }
@@ -324,7 +326,7 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
     try {
       await webinarService.publishWebinar(webinarId, true);
       const currentWebinars = get().adminWebinars;
-      const updatedWebinars = currentWebinars.map(w => 
+      const updatedWebinars = currentWebinars.map(w =>
         w.id.toString() === webinarId ? { ...w, isPublished: true } : w
       );
       set({ adminWebinars: updatedWebinars });
@@ -341,7 +343,7 @@ export const useWebinarStore = create<WebinarState>((set, get) => ({
     try {
       await webinarService.publishWebinar(webinarId, false);
       const currentWebinars = get().adminWebinars;
-      const updatedWebinars = currentWebinars.map(w => 
+      const updatedWebinars = currentWebinars.map(w =>
         w.id.toString() === webinarId ? { ...w, isPublished: false } : w
       );
       set({ adminWebinars: updatedWebinars });

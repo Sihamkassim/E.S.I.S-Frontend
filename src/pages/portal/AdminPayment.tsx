@@ -650,107 +650,105 @@ const AdminPayments: React.FC = () => {
 
             {/* Payment Details Modal */}
             {showDetailsModal && selectedPayment && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className={`w-full max-w-2xl rounded-lg shadow-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                        }`}>
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                            <h3 className="text-lg font-semibold">Payment Details</h3>
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="w-full max-w-2xl rounded-lg shadow-xl bg-background border border-border">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-border">
+                            <h3 className="text-lg font-semibold text-foreground">Payment Details</h3>
                             <button
                                 onClick={closeModals}
-                                className={`p-2 rounded-lg transition-colors ${theme === 'dark'
-                                    ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                                    }`}
+                                className="p-2 rounded-lg transition-colors text-muted-foreground hover:text-foreground hover:bg-muted"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
+                        {/* Content */}
                         <div className="p-6 max-h-96 overflow-y-auto">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Payment Information */}
                                 <div className="space-y-4">
-                                    <h4 className="font-semibold text-lg mb-3">Payment Information</h4>
+                                    <h4 className="font-semibold text-lg text-foreground mb-3">Payment Information</h4>
 
                                     <div className="space-y-3">
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Transaction ID:
                                             </span>
-                                            <span className="font-mono text-sm">{selectedPayment.transactionRef}</span>
+                                            <span className="font-mono text-sm text-foreground">{selectedPayment.transactionRef}</span>
                                         </div>
 
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Amount:
                                             </span>
-                                            <span className="font-semibold text-lg text-green-600">
+                                            <span className="font-semibold text-lg text-green-600 dark:text-green-400">
                                                 {selectedPayment.amount.toLocaleString()} {selectedPayment.currency}
                                             </span>
                                         </div>
 
                                         <div className="flex justify-between items-center">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Status:
                                             </span>
                                             {getStatusBadge(selectedPayment.status)}
                                         </div>
 
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Date:
                                             </span>
-                                            <span className="text-sm">{formatDate(selectedPayment.createdAt)}</span>
+                                            <span className="text-sm text-foreground">{formatDate(selectedPayment.createdAt)}</span>
                                         </div>
 
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Type:
                                             </span>
-                                            <span className="text-sm">{getPaymentType(selectedPayment).type}</span>
+                                            <span className="text-sm text-foreground">{getPaymentType(selectedPayment).type}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* User Information */}
                                 <div className="space-y-4">
-                                    <h4 className="font-semibold text-lg mb-3">User Information</h4>
+                                    <h4 className="font-semibold text-lg text-foreground mb-3">User Information</h4>
 
                                     <div className="space-y-3">
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Name:
                                             </span>
-                                            <span className="text-sm">{selectedPayment.user.profile?.name || 'N/A'}</span>
+                                            <span className="text-sm text-foreground">{selectedPayment.user.profile?.name || 'N/A'}</span>
                                         </div>
 
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 Email:
                                             </span>
-                                            <span className="text-sm flex items-center gap-1">
-                                                <Mail className="w-3 h-3" />
+                                            <span className="text-sm text-foreground flex items-center gap-1">
+                                                <Mail className="w-3 h-3 text-muted-foreground" />
                                                 {selectedPayment.user.email}
                                             </span>
                                         </div>
 
                                         {selectedPayment.user.profile?.phone && (
                                             <div className="flex justify-between">
-                                                <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                <span className="text-sm text-muted-foreground">
                                                     Phone:
                                                 </span>
-                                                <span className="text-sm flex items-center gap-1">
-                                                    <Phone className="w-3 h-3" />
+                                                <span className="text-sm text-foreground flex items-center gap-1">
+                                                    <Phone className="w-3 h-3 text-muted-foreground" />
                                                     {selectedPayment.user.profile.phone}
                                                 </span>
                                             </div>
                                         )}
 
                                         <div className="flex justify-between">
-                                            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            <span className="text-sm text-muted-foreground">
                                                 User ID:
                                             </span>
-                                            <span className="text-sm">#{selectedPayment.user.id}</span>
+                                            <span className="text-sm text-foreground">#{selectedPayment.user.id}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -758,40 +756,40 @@ const AdminPayments: React.FC = () => {
 
                             {/* Service Details */}
                             {(selectedPayment.webinar || selectedPayment.membership) && (
-                                <div className="mt-6 pt-6 border-t border-gray-200">
-                                    <h4 className="font-semibold text-lg mb-3">Service Details</h4>
+                                <div className="mt-6 pt-6 border-t border-border">
+                                    <h4 className="font-semibold text-lg text-foreground mb-3">Service Details</h4>
 
                                     {selectedPayment.webinar && (
                                         <div className="space-y-2">
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Webinar: <span className="font-medium text-blue-600">{selectedPayment.webinar.title}</span>
+                                            <p className="text-sm text-muted-foreground">
+                                                Webinar: <span className="font-medium text-blue-600 dark:text-blue-400">{selectedPayment.webinar.title}</span>
                                             </p>
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Date: {formatDate(selectedPayment.webinar.date)}
+                                            <p className="text-sm text-muted-foreground">
+                                                Date: <span className="text-foreground">{formatDate(selectedPayment.webinar.date)}</span>
                                             </p>
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Price: {selectedPayment.webinar.price.toLocaleString()} ETB
+                                            <p className="text-sm text-muted-foreground">
+                                                Price: <span className="text-foreground">{selectedPayment.webinar.price.toLocaleString()} ETB</span>
                                             </p>
                                         </div>
                                     )}
 
                                     {selectedPayment.membership && (
                                         <div className="space-y-2">
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Plan: <span className="font-medium text-purple-600">{selectedPayment.membership.plan.name}</span>
+                                            <p className="text-sm text-muted-foreground">
+                                                Plan: <span className="font-medium text-purple-600 dark:text-purple-400">{selectedPayment.membership.plan.name}</span>
                                             </p>
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Billing: {selectedPayment.membership.plan.billingCycle}
+                                            <p className="text-sm text-muted-foreground">
+                                                Billing: <span className="text-foreground">{selectedPayment.membership.plan.billingCycle}</span>
                                             </p>
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Plan Price: {selectedPayment.membership.plan.price.toLocaleString()} ETB
+                                            <p className="text-sm text-muted-foreground">
+                                                Plan Price: <span className="text-foreground">{selectedPayment.membership.plan.price.toLocaleString()} ETB</span>
                                             </p>
-                                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                Start Date: {formatDate(selectedPayment.membership.startDate)}
+                                            <p className="text-sm text-muted-foreground">
+                                                Start Date: <span className="text-foreground">{formatDate(selectedPayment.membership.startDate)}</span>
                                             </p>
                                             {selectedPayment.membership.endDate && (
-                                                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                    End Date: {formatDate(selectedPayment.membership.endDate)}
+                                                <p className="text-sm text-muted-foreground">
+                                                    End Date: <span className="text-foreground">{formatDate(selectedPayment.membership.endDate)}</span>
                                                 </p>
                                             )}
                                         </div>
