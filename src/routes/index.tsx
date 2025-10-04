@@ -41,6 +41,7 @@ import CreateInternshipPage from '@/pages/admin/CreateInternshipPage';
 import EditInternshipPage from '@/pages/admin/EditInternshipPage';
 import AdminInternships from '@/pages/admin/AdminInternshipsPage';
 import { AdminInternshipPage } from '@/pages/admin/AdminInternshipPage';
+import InternshipApplications from '@/pages/portal/AdminInternshipApplications';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -251,7 +252,11 @@ export const dashboardRoutes: AppRoute[] = [
       },
       {
         path: 'admin-internships/:id/edit',
-        element: createProtectedRoute(<EditInternshipPage/>, ['ADMIN']),
+        element: createProtectedRoute(<EditInternshipPage />, ['ADMIN']),
+      },
+      {
+        path: 'internship-applications',
+        element: createProtectedRoute(<InternshipApplications />, ['ADMIN']),
       },
     ],
   },

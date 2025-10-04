@@ -17,7 +17,8 @@ import {
   Settings,
   UserCircle,
   Users,
-  Video
+  Video,
+  FileSearch // Added for internship applications
 } from 'lucide-react';
 
 interface NavItem {
@@ -25,6 +26,7 @@ interface NavItem {
   path: string;
   icon: React.ReactNode;
   roles: ('USER' | 'ADMIN')[];
+  children?: NavItem[]; // Added for nested items
 }
 
 const navigationItems: NavItem[] = [
@@ -50,7 +52,15 @@ const navigationItems: NavItem[] = [
     title: 'Internships',
     path: '/dashboard/admin-internships',
     icon: <Briefcase className="w-5 h-5" />,
-    roles: ['ADMIN']
+    roles: ['ADMIN'],
+    children: [
+      {
+        title: 'Applications',
+        path: '/dashboard/internship-applications',
+        icon: <FileSearch className="w-4 h-4" />,
+        roles: ['ADMIN']
+      }
+    ]
   },
   {
     title: 'My Webinars',
@@ -76,7 +86,6 @@ const navigationItems: NavItem[] = [
     icon: <PanelLeft className="w-5 h-5" />,
     roles: ['ADMIN']
   },
-
   {
     title: 'My Payments',
     path: '/dashboard/my-payment',
@@ -89,12 +98,6 @@ const navigationItems: NavItem[] = [
     icon: <PanelLeft className="w-5 h-5" />,
     roles: ['USER']
   },
-  // {
-  //   title: 'Billing',
-  //   path: '/dashboard/billing',
-  //   icon: <CreditCard className="w-5 h-5" />,
-  //   roles: ['USER']
-  // },
   {
     title: 'Startup Programs',
     path: '/dashboard/me-startup',
@@ -153,13 +156,14 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onClose }) => {
   // Initialize collapsed state based on isOpen
-  const [isCollapsed, setIsCollapsed] = useState(!isOpen); // ❌ invert logic if needed
+  const [isCollapsed, setIsCollapsed] = useState(!isOpen);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const { theme } = useTheme();
   const location = useLocation();
 
   // Sync collapsed state if isOpen prop changes
   useEffect(() => {
-    setIsCollapsed(!isOpen); // or just setIsCollapsed(!isOpen) depending on your design
+    setIsCollapsed(!isOpen);
   }, [isOpen]);
 
   // Close sidebar on mobile navigation
@@ -169,7 +173,106 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onCl
     }
   }, [location.pathname, onClose]);
 
+  // Auto-expand parent if child is active
+  useEffect(() => {
+    const newExpanded = new Set(expandedItems);
+    navigationItems.forEach(item => {
+      if (item.children) {
+        const isChildActive = item.children.some(child =>
+          location.pathname === child.path
+        );
+        if (isChildActive) {
+          newExpanded.add(item.path);
+        }
+      }
+    });
+    setExpandedItems(newExpanded);
+  }, [location.pathname]);
+
+  const toggleExpanded = (path: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(path)) {
+      newExpanded.delete(path);
+    } else {
+      newExpanded.add(path);
+    }
+    setExpandedItems(newExpanded);
+  };
+
   const filteredNavItems = navigationItems.filter(item => item.roles.includes(userRole));
+
+  const renderNavItem = (item: NavItem, level = 0) => {
+    const isActive = location.pathname === item.path;
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.has(item.path);
+    const childItems = hasChildren ? item.children!.filter(child => child.roles.includes(userRole)) : [];
+    const hasVisibleChildren = childItems.length > 0;
+
+    return (
+      <div key={item.path}>
+        <div
+          className={`flex items-center p-2 mb-1 rounded-lg transition-all duration-200 cursor-pointer ${isActive
+            ? theme === 'dark'
+              ? 'bg-primary text-white'
+              : 'bg-primary-light/10 text-primary'
+            : theme === 'dark'
+              ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+          style={{
+            paddingLeft: isCollapsed ? '0.5rem' : `${0.5 + level * 1}rem`,
+            marginLeft: isCollapsed ? '0' : `${level * 0.5}rem`,
+            marginRight: isCollapsed ? '0' : '0.5rem'
+          }}
+          onClick={(e) => {
+            if (hasVisibleChildren) {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleExpanded(item.path);
+            } else {
+              // Navigate normally if no children or if it's a leaf node
+            }
+          }}
+        >
+          <Link
+            to={hasVisibleChildren ? '#' : item.path} // Use # for parent items with children
+            className={`flex items-center flex-1 ${isCollapsed ? 'justify-center' : ''
+              }`}
+            onClick={(e) => {
+              if (hasVisibleChildren) {
+                e.preventDefault();
+                // Toggle is handled by the parent div
+              } else {
+                if (onClose && window.innerWidth < 1024) {
+                  onClose();
+                }
+              }
+            }}
+          >
+            <div className={isCollapsed ? 'mx-auto' : ''}>{item.icon}</div>
+            {!isCollapsed && (
+              <>
+                <span className="ml-3 font-medium flex-1">{item.title}</span>
+                {hasVisibleChildren && (
+                  <ChevronRight
+                    className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''
+                      }`}
+                  />
+                )}
+              </>
+            )}
+          </Link>
+        </div>
+
+        {/* Render children if expanded and not collapsed */}
+        {hasVisibleChildren && !isCollapsed && isExpanded && (
+          <div className="ml-4 border-l-2 border-gray-200 dark:border-gray-700">
+            {childItems.map(child => renderNavItem(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -194,35 +297,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onCl
           alt="ESIS Logo"
           className={`${isCollapsed ? 'w-8' : 'w-12'} transition-all duration-300`}
         />
-        {!isCollapsed && (
-          <span className={`ml-2 font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            E.S.I.S
-          </span>
-        )}
       </div>
 
       {/* Navigation Links */}
       <nav className="mt-8 px-2">
-        {filteredNavItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center p-2 mb-2 rounded-lg transition-all duration-200 ${isActive
-                ? theme === 'dark'
-                  ? 'bg-primary text-white'
-                  : 'bg-primary-light/10 text-primary'
-                : theme === 'dark'
-                  ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-            >
-              <div className={isCollapsed ? 'mx-auto' : ''}>{item.icon}</div>
-              {!isCollapsed && <span className="ml-3 font-medium">{item.title}</span>}
-            </Link>
-          );
-        })}
+        {filteredNavItems.map((item) => renderNavItem(item))}
       </nav>
     </div>
   );
