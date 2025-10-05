@@ -42,6 +42,7 @@ import EditInternshipPage from '@/pages/admin/EditInternshipPage';
 import AdminInternships from '@/pages/admin/AdminInternshipsPage';
 import { AdminInternshipPage } from '@/pages/admin/AdminInternshipPage';
 import InternshipApplications from '@/pages/portal/AdminInternshipApplications';
+import Home from '@/pages/public/HomePage/Home';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -60,7 +61,7 @@ const createProtectedRoute = (
 export const publicRoutes: AppRoute[] = [
   {
     path: '/',
-    element: <PublicPage />,
+    element: <Home />,
   },
   {
     path: '/webinars',
