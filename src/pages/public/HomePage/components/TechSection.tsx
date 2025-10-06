@@ -313,9 +313,15 @@ const TechSection: React.FC<TechSectionProps> = ({ api }) => {
             <AnimatedSection className={`relative group/carousel transition-all duration-1000 ease-out ${isDesktop ? 'block' : 'grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6'}`}>
                 {isDesktop && (
                     <>
+                        {/* Left blur gradient */}
+                        <div className="absolute left-0 top-0 bottom-6 w-24 bg-gradient-to-r from-gray-50 via-gray-50/80 to-transparent z-10 pointer-events-none"></div>
+
+                        {/* Right blur gradient */}
+                        <div className="absolute right-0 top-0 bottom-6 w-24 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent z-10 pointer-events-none"></div>
+
                         <button
                             onClick={() => scrollArticles('left')}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 ease-out opacity-0 group-hover/carousel:opacity-100 hover:scale-110"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 ease-out opacity-0 group-hover/carousel:opacity-100 hover:scale-110"
                         >
                             <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -323,7 +329,7 @@ const TechSection: React.FC<TechSectionProps> = ({ api }) => {
                         </button>
                         <button
                             onClick={() => scrollArticles('right')}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 ease-out opacity-0 group-hover/carousel:opacity-100 hover:scale-110"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 ease-out opacity-0 group-hover/carousel:opacity-100 hover:scale-110"
                         >
                             <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -334,6 +340,13 @@ const TechSection: React.FC<TechSectionProps> = ({ api }) => {
                 <div
                     ref={articleScrollRef}
                     onScroll={isDesktop ? snapToLoop : undefined}
+                    onWheel={isDesktop ? (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (articleScrollRef.current) {
+                            articleScrollRef.current.scrollLeft += e.deltaY;
+                        }
+                    } : undefined}
                     className={`${isDesktop ? 'flex gap-6 overflow-x-auto pb-6 scrollbar-hide' : ''}`}
                     style={isDesktop ? {
                         scrollbarWidth: 'none',
@@ -347,7 +360,8 @@ const TechSection: React.FC<TechSectionProps> = ({ api }) => {
                 </div>
             </AnimatedSection>
         );
-    };
+    }
+
 
     return (
         <section className="py-8 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 my-10">
@@ -361,9 +375,11 @@ const TechSection: React.FC<TechSectionProps> = ({ api }) => {
                     </p>
                 </AnimatedSection>
 
-                <AnimatedSection className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 transition-all duration-500 ease-out">
-                    Featured Today
-                </AnimatedSection>
+                <div className='h-[200px]'>
+                    <AnimatedSection className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 transition-all py-8 duration-500 ease-out">
+                        Featured Today
+                    </AnimatedSection>
+                </div>
 
                 {renderArticles()}
             </div>

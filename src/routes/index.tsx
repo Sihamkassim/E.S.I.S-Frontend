@@ -23,7 +23,6 @@ import DashboardLayout from '../components/layout/DashboardLayout';
 import AdminProjects from '../pages/portal/AdminProjects';
 import AdminWebinars from '../pages/portal/AdminWebinar';
 import CreateWebinarPage from '../pages/portal/CreateWebinarPage';
-import { DashboardPage } from '../pages/portal/DashboardPage';
 import { ChangePasswordPage } from '../pages/portal/UpdatePassword';
 import UserInternships from '../pages/portal/UserInternships';
 import UserProjects from '../pages/portal/UserProjects';
@@ -43,6 +42,9 @@ import AdminInternships from '@/pages/admin/AdminInternshipsPage';
 import { AdminInternshipPage } from '@/pages/admin/AdminInternshipPage';
 import InternshipApplications from '@/pages/portal/AdminInternshipApplications';
 import Home from '@/pages/public/HomePage/Home';
+import CommunityPage from '@/pages/public/communityPage/CommunityPage';
+import AboutPage from '../pages/public/AboutPage/AboutPage';
+import DashboardPage from '@/pages/portal/DashboardPage';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -62,6 +64,14 @@ export const publicRoutes: AppRoute[] = [
   {
     path: '/',
     element: <Home />,
+  },
+  {
+    path: '/community',
+    element: <CommunityPage />,
+  },
+  {
+    path: '/about-us',
+    element: <AboutPage />,
   },
   {
     path: '/webinars',
