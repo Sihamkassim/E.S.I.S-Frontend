@@ -108,10 +108,10 @@ export default function AdminDashboard() {
 
   if (loading && !dashboardData) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
-          <RefreshCw className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-slate-600 text-lg font-medium">Loading dashboard...</p>
+          <RefreshCw className="h-12 w-12 text-blue-600 dark:text-blue-400 animate-spin mx-auto mb-4" />
+          <p className="text-slate-600 dark:text-slate-400 text-lg font-medium">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -119,11 +119,11 @@ export default function AdminDashboard() {
 
   if (error && !dashboardData) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-900 mb-2 text-center">Connection Error</h3>
-          <p className="text-slate-600 text-center mb-6">{error}</p>
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-900">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 max-w-md w-full">
+          <AlertCircle className="h-12 w-12 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 text-center">Connection Error</h3>
+          <p className="text-slate-600 dark:text-slate-400 text-center mb-6">{error}</p>
           <button
             onClick={fetchDashboardData}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
@@ -140,16 +140,16 @@ export default function AdminDashboard() {
   const chartData: ChartData = dashboardData?.chartData || {};
 
   return (
-    <div className="min-h-screen p-3 sm:p-6 lg:p-8">
+    <div className="min-h-screen p-3 sm:p-6 lg:p-8 bg-slate-50 dark:bg-slate-900">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900">
+            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">
               ESIS Dashboard
             </h1>
-            <p className="text-slate-600 mt-1">Ethiopian Startup Innovation System</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-slate-600 dark:text-slate-400 mt-1">Ethiopian Startup Innovation System</p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
               Last updated: {lastUpdated.toLocaleTimeString()}
             </p>
           </div>
@@ -157,14 +157,14 @@ export default function AdminDashboard() {
             <button
               onClick={fetchDashboardData}
               disabled={loading}
-              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2 disabled:opacity-50 text-slate-900 dark:text-white"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
             <button
               onClick={handleExportReport}
-              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2 text-slate-900 dark:text-white"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Export</span>
@@ -175,77 +175,77 @@ export default function AdminDashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Users Card */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-6">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <Users className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <button onClick={() => toggleVisibility('users')} className="p-1.5 hover:bg-slate-100 rounded">
+              <button onClick={() => toggleVisibility('users')} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
                 {hiddenStates.users ? <EyeOff className="h-5 w-5 text-slate-400" /> : <Eye className="h-5 w-5 text-slate-400" />}
               </button>
             </div>
-            <div className="text-3xl font-bold text-slate-900 mb-2">
+            <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               {formatValue(summary.totalUsers, hiddenStates.users)}
             </div>
-            <p className="text-base text-slate-600 mb-3">Total Users</p>
-            <div className="flex items-center text-sm text-green-600">
+            <p className="text-base text-slate-600 dark:text-slate-400 mb-3">Total Users</p>
+            <div className="flex items-center text-sm text-green-600 dark:text-green-400">
               <TrendingUp className="h-4 w-4 mr-1" />
               +{summary.userGrowthRate || 0}%
             </div>
           </div>
 
           {/* Memberships Card */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-6">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <UserCheck className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg">
+                <UserCheck className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <button onClick={() => toggleVisibility('memberships')} className="p-1.5 hover:bg-slate-100 rounded">
+              <button onClick={() => toggleVisibility('memberships')} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
                 {hiddenStates.memberships ? <EyeOff className="h-5 w-5 text-slate-400" /> : <Eye className="h-5 w-5 text-slate-400" />}
               </button>
             </div>
-            <div className="text-3xl font-bold text-slate-900 mb-2">
+            <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               {formatValue(summary.totalMemberships, hiddenStates.memberships)}
             </div>
-            <p className="text-base text-slate-600 mb-3">Memberships</p>
-            <div className="flex items-center text-sm text-green-600">
+            <p className="text-base text-slate-600 dark:text-slate-400 mb-3">Memberships</p>
+            <div className="flex items-center text-sm text-green-600 dark:text-green-400">
               <TrendingUp className="h-4 w-4 mr-1" />
               +{summary.membershipGrowthRate || 0}%
             </div>
           </div>
 
           {/* Webinars Card */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-6">
-              <div className="p-3 bg-green-50 rounded-lg">
-                <Calendar className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-green-50 dark:bg-green-900 rounded-lg">
+                <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-slate-900 mb-2">
+            <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               {summary.activeWebinars || 0}
             </div>
-            <p className="text-base text-slate-600 mb-3">Active Webinars</p>
-            <div className="flex items-center text-sm text-green-600">
+            <p className="text-base text-slate-600 dark:text-slate-400 mb-3">Active Webinars</p>
+            <div className="flex items-center text-sm text-green-600 dark:text-green-400">
               <TrendingUp className="h-4 w-4 mr-1" />
               +{summary.webinarGrowthRate || 0}%
             </div>
           </div>
 
           {/* Revenue Card */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-6">
-              <div className="p-3 bg-emerald-50 rounded-lg">
-                <DollarSign className="h-6 w-6 text-emerald-600" />
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900 rounded-lg">
+                <DollarSign className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <button onClick={() => toggleVisibility('payments')} className="p-1.5 hover:bg-slate-100 rounded">
+              <button onClick={() => toggleVisibility('payments')} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded">
                 {hiddenStates.payments ? <EyeOff className="h-5 w-5 text-slate-400" /> : <Eye className="h-5 w-5 text-slate-400" />}
               </button>
             </div>
-            <div className="text-3xl font-bold text-slate-900 mb-2">
+            <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
               ${formatValue(summary.totalPayments, hiddenStates.payments)}
             </div>
-            <p className="text-base text-slate-600 mb-3">Total Revenue</p>
-            <div className="flex items-center text-sm text-green-600">
+            <p className="text-base text-slate-600 dark:text-slate-400 mb-3">Total Revenue</p>
+            <div className="flex items-center text-sm text-green-600 dark:text-green-400">
               <TrendingUp className="h-4 w-4 mr-1" />
               +18.2%
             </div>
@@ -254,50 +254,50 @@ export default function AdminDashboard() {
 
         {/* Secondary Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-cyan-50 rounded-lg">
-                <Rocket className="h-6 w-6 text-cyan-600" />
+              <div className="p-3 bg-cyan-50 dark:bg-cyan-900 rounded-lg">
+                <Rocket className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-slate-900">{summary.startups || 0}</div>
-                <p className="text-sm text-slate-600">Startups</p>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white">{summary.startups || 0}</div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Startups</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-pink-50 rounded-lg">
-                <FolderKanban className="h-6 w-6 text-pink-600" />
+              <div className="p-3 bg-pink-50 dark:bg-pink-900 rounded-lg">
+                <FolderKanban className="h-6 w-6 text-pink-600 dark:text-pink-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-slate-900">{summary.projects || 0}</div>
-                <p className="text-sm text-slate-600">Projects</p>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white">{summary.projects || 0}</div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Projects</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-indigo-50 rounded-lg">
-                <GraduationCap className="h-6 w-6 text-indigo-600" />
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-900 rounded-lg">
+                <GraduationCap className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-slate-900">{summary.internships || 0}</div>
-                <p className="text-sm text-slate-600">Internships</p>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white">{summary.internships || 0}</div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Internships</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-orange-50 rounded-lg">
-                <BookOpen className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-orange-50 dark:bg-orange-900 rounded-lg">
+                <BookOpen className="h-6 w-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-slate-900">{summary.totalCourses || 0}</div>
-                <p className="text-sm text-slate-600">Courses</p>
+                <div className="text-2xl font-bold text-slate-900 dark:text-white">{summary.totalCourses || 0}</div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Courses</p>
               </div>
             </div>
           </div>
@@ -306,12 +306,12 @@ export default function AdminDashboard() {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* User Growth Chart */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-2 mb-6">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">User Growth</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">User Growth</h3>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={chartData.userGrowth || []}>
@@ -345,12 +345,12 @@ export default function AdminDashboard() {
           </div>
 
           {/* Membership Distribution */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-2 mb-6">
-              <div className="p-3 bg-purple-50 rounded-lg">
-                <Award className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg">
+                <Award className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Membership Distribution</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Membership Distribution</h3>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -382,12 +382,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Revenue Overview */}
-        <div className="bg-white rounded-xl p-8 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-2 mb-8">
-            <div className="p-3 bg-emerald-50 rounded-lg">
-              <Building2 className="h-6 w-6 text-emerald-600" />
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-900 rounded-lg">
+              <Building2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900">Revenue Overview</h3>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Revenue Overview</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl text-white shadow-md">

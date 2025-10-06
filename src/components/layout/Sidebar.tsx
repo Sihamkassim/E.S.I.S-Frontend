@@ -18,7 +18,8 @@ import {
   UserCircle,
   Users,
   Video,
-  FileSearch // Added for internship applications
+  FileSearch, // Added for internship applications
+  LucideArrowDownWideNarrow
 } from 'lucide-react';
 
 interface NavItem {
@@ -58,6 +59,12 @@ const navigationItems: NavItem[] = [
         title: 'Applications',
         path: '/dashboard/internship-applications',
         icon: <FileSearch className="w-4 h-4" />,
+        roles: ['ADMIN']
+      },
+      {
+        title: 'Create',
+        path: '/dashboard/admin-internships',
+        icon: <LucideArrowDownWideNarrow className="w-4 h-4" />,
         roles: ['ADMIN']
       }
     ]
