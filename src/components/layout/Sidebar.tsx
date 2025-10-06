@@ -291,11 +291,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole, isOpen = false, onCl
       </button>
 
       {/* Logo Section */}
-      <div className={`p-4 ${isCollapsed ? 'justify-center' : ''} flex items-center`}>
+      <div className={`${isCollapsed ? 'justify-center' : ''} flex items-center`}>
         <img
           src="/ESIS-logo.png"
           alt="ESIS Logo"
-          className={`${isCollapsed ? 'w-8' : 'w-12'} transition-all duration-300`}
+          className={`${isCollapsed ? 'w-30' : 'w-30'} transition-all duration-300`}
         />
       </div>
 

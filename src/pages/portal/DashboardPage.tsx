@@ -169,9 +169,6 @@ export default function AdminDashboard() {
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">
-              Add Member
-            </button>
           </div>
         </div>
 

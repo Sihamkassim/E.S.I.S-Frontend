@@ -45,6 +45,8 @@ import Home from '@/pages/public/HomePage/Home';
 import CommunityPage from '@/pages/public/communityPage/CommunityPage';
 import AboutPage from '../pages/public/AboutPage/AboutPage';
 import DashboardPage from '@/pages/portal/DashboardPage';
+import UserDashboard from '@/pages/portal/UserDashboard';
+import RoleBasedDashboard from './RoleBasedDashboard';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -131,147 +133,45 @@ export const dashboardRoutes: AppRoute[] = [
     children: [
       {
         index: true,
-        element: createProtectedRoute(<DashboardPage />),
+        element: createProtectedRoute(<RoleBasedDashboard />, ['ADMIN', 'USER']),
       },
-      {
-        path: 'users',
-        element: createProtectedRoute(<UsersPage />, ['ADMIN']),
-      },
-      {
-        path: 'webinars',
-        element: createProtectedRoute(<UserWebinars />, ['USER']),
-      },
-      {
-        path: 'admin-webinars',
-        element: createProtectedRoute(<AdminWebinars />, ['ADMIN']),
-      },
-      {
-        path: 'admin-webinars/create',
-        element: createProtectedRoute(<CreateWebinarPage />, ['ADMIN']),
-      },
-      {
-        path: 'admin-webinars/edit/:id',
-        element: createProtectedRoute(<div>Edit Webinar Page</div>, ['ADMIN']),
-      },
-      {
-        path: 'admin-webinars/applicants/:id',
-        element: createProtectedRoute(<div>Webinar Applicants Page</div>, ['ADMIN']),
-      },
-      {
-        path: 'internships',
-        element: createProtectedRoute(<UserInternships />, ['USER']),
-      },
-      {
-        path: 'membership',
-        element: createProtectedRoute(<div>Membership Page</div>, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'billing',
-        element: createProtectedRoute(<div>Billing Page</div>, ['USER']),
-      },
-      {
-        path: 'startup-programs',
-        element: createProtectedRoute(<div>Startup Programs</div>, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'projects/my',
-        element: createProtectedRoute(<UserProjects />, ['USER']),
-      },
-      {
-        path: 'projects',
-        element: createProtectedRoute(<AdminProjects />, ['ADMIN']),
-      },
-      {
-        path: 'articles',
-        element: createProtectedRoute(<ArticlesPage />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'articles/:slug',
-        element: createProtectedRoute(<ArticlePage />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'admin-articles',
-        element: createProtectedRoute(<AdminArticles />, ['ADMIN']),
-      },
-      {
-        path: 'admin-articles/create',
-        element: createProtectedRoute(<PostArticlePage />, ['ADMIN']),
-      },
-      {
-        path: 'admin-articles/:id/edit',
-        element: createProtectedRoute(<EditArticlePage />, ['ADMIN']),
-      },
-      {
-        path: 'settings',
-        element: createProtectedRoute(<AccountSettingsPage />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'change-password',
-        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'change-password',
-        element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'membership-plans',
-        element: createProtectedRoute(<AdminPlans />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'add-plans',
-        element: createProtectedRoute(<AdminAddPlan />, ['ADMIN']),
-      },
-      {
-        path: 'get-plans',
-        element: createProtectedRoute(<UserPlans />, ['USER']),
-      },
-      {
-        path: 'post-startup',
-        element: createProtectedRoute(<UserCreateStartup />, ['USER', 'ADMIN']),
-      },
-      {
-        path: 'get-startup',
-        element: createProtectedRoute(<AdminGetStartups />, ['ADMIN']),
-      },
-      {
-        path: 'me-startup',
-        element: createProtectedRoute(<UserGetStartup />, ['USER']),
-      },
-      {
-        path: 'get-memberships',
-        element: createProtectedRoute(<AdminMembership />, ['ADMIN']),
-      },
-      {
-        path: 'my-payment',
-        element: createProtectedRoute(<UserPayment />, ['USER']),
-      },
-      {
-        path: 'get-payment',
-        element: createProtectedRoute(<AdminPayments />, ['ADMIN']),
-      },
-      {
-        path: 'admin-internships/:id',
-        element: createProtectedRoute(<AdminInternshipPage />, ['ADMIN']),
-      },
-      {
-        path: 'admin-internships',
-        element: createProtectedRoute(<AdminInternships />, ['ADMIN']),
-      },
-      {
-        path: 'admin-internships/create',
-        element: createProtectedRoute(<CreateInternshipPage />, ['ADMIN']),
-      },
-      {
-        path: 'admin-internships/:id/edit',
-        element: createProtectedRoute(<EditInternshipPage />, ['ADMIN']),
-      },
-      {
-        path: 'internship-applications',
-        element: createProtectedRoute(<InternshipApplications />, ['ADMIN']),
-      },
+      { path: 'users', element: createProtectedRoute(<UsersPage />, ['ADMIN']) },
+      { path: 'webinars', element: createProtectedRoute(<UserWebinars />, ['USER']) },
+      { path: 'admin-webinars', element: createProtectedRoute(<AdminWebinars />, ['ADMIN']) },
+      { path: 'admin-webinars/create', element: createProtectedRoute(<CreateWebinarPage />, ['ADMIN']) },
+      { path: 'admin-webinars/edit/:id', element: createProtectedRoute(<div>Edit Webinar Page</div>, ['ADMIN']) },
+      { path: 'admin-webinars/applicants/:id', element: createProtectedRoute(<div>Webinar Applicants Page</div>, ['ADMIN']) },
+      { path: 'internships', element: createProtectedRoute(<UserInternships />, ['USER']) },
+      { path: 'membership', element: createProtectedRoute(<div>Membership Page</div>, ['USER', 'ADMIN']) },
+      { path: 'billing', element: createProtectedRoute(<div>Billing Page</div>, ['USER']) },
+      { path: 'startup-programs', element: createProtectedRoute(<div>Startup Programs</div>, ['USER', 'ADMIN']) },
+      { path: 'projects/my', element: createProtectedRoute(<UserProjects />, ['USER']) },
+      { path: 'projects', element: createProtectedRoute(<AdminProjects />, ['ADMIN']) },
+      { path: 'articles', element: createProtectedRoute(<ArticlesPage />, ['USER', 'ADMIN']) },
+      { path: 'articles/:slug', element: createProtectedRoute(<ArticlePage />, ['USER', 'ADMIN']) },
+      { path: 'admin-articles', element: createProtectedRoute(<AdminArticles />, ['ADMIN']) },
+      { path: 'admin-articles/create', element: createProtectedRoute(<PostArticlePage />, ['ADMIN']) },
+      { path: 'admin-articles/:id/edit', element: createProtectedRoute(<EditArticlePage />, ['ADMIN']) },
+      { path: 'settings', element: createProtectedRoute(<AccountSettingsPage />, ['USER', 'ADMIN']) },
+      { path: 'change-password', element: createProtectedRoute(<ChangePasswordPage />, ['USER', 'ADMIN']) },
+      { path: 'membership-plans', element: createProtectedRoute(<AdminPlans />, ['USER', 'ADMIN']) },
+      { path: 'add-plans', element: createProtectedRoute(<AdminAddPlan />, ['ADMIN']) },
+      { path: 'get-plans', element: createProtectedRoute(<UserPlans />, ['USER']) },
+      { path: 'post-startup', element: createProtectedRoute(<UserCreateStartup />, ['USER', 'ADMIN']) },
+      { path: 'get-startup', element: createProtectedRoute(<AdminGetStartups />, ['ADMIN']) },
+      { path: 'me-startup', element: createProtectedRoute(<UserGetStartup />, ['USER']) },
+      { path: 'get-memberships', element: createProtectedRoute(<AdminMembership />, ['ADMIN']) },
+      { path: 'my-payment', element: createProtectedRoute(<UserPayment />, ['USER']) },
+      { path: 'get-payment', element: createProtectedRoute(<AdminPayments />, ['ADMIN']) },
+      { path: 'admin-internships/:id', element: createProtectedRoute(<AdminInternshipPage />, ['ADMIN']) },
+      { path: 'admin-internships', element: createProtectedRoute(<AdminInternships />, ['ADMIN']) },
+      { path: 'admin-internships/create', element: createProtectedRoute(<CreateInternshipPage />, ['ADMIN']) },
+      { path: 'admin-internships/:id/edit', element: createProtectedRoute(<EditInternshipPage />, ['ADMIN']) },
+      { path: 'internship-applications', element: createProtectedRoute(<InternshipApplications />, ['ADMIN']) },
     ],
   },
 ];
+
 
 export const errorRoutes: AppRoute[] = [
   {
