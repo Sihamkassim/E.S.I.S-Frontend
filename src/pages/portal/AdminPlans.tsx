@@ -369,9 +369,9 @@ const EditModal: React.FC<{
 
                     <div>
                         <label htmlFor="edit-price" className={`
-              block text-sm font-medium mb-2
-              ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}
-            `}>
+                        block text-sm font-medium mb-2
+                        ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}
+                        `}>
                             Price ($)
                         </label>
                         <input
@@ -391,7 +391,7 @@ const EditModal: React.FC<{
                                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500'
                                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 hover:border-gray-400'
                                 }
-              `}
+                               `}
                             required
                         />
                         {errors.price && (
@@ -466,7 +466,8 @@ const Pagination: React.FC<{
                     }
                         `}
             >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className={`w-4 h-4
+                            ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} />
             </button>
 
             <span className={`
@@ -489,7 +490,8 @@ const Pagination: React.FC<{
                     }
                         `}
             >
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className={`w-4 h-4
+                            ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} />
             </button>
         </div>
     </div>
