@@ -29,11 +29,11 @@ export default function AboutPage() {
 
     const navItems = [
         { name: 'Home', href: '/' },
-        { name: 'Tech Updates', href: '#' },
+        { name: 'internship', href: '/internship' },
         { name: 'Community', href: '/community' },
-        { name: 'Project', href: '#' },
-        { name: 'Webinar', href: '#' },
-        { name: 'Membership', href: '#' },
+        { name: 'Project', href: '/project' },
+        { name: 'Webinar', href: '/Webinar' },
+        { name: 'Membership', href: '/Membership' },
         { name: 'About', href: '/about-us' },
     ];
 

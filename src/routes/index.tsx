@@ -47,6 +47,10 @@ import AboutPage from '../pages/public/AboutPage/AboutPage';
 import DashboardPage from '@/pages/portal/DashboardPage';
 import UserDashboard from '@/pages/portal/UserDashboard';
 import RoleBasedDashboard from './RoleBasedDashboard';
+import Project from '@/pages/public/project/Project';
+import Webinar from '@/pages/public/webinar/Webinar';
+import InternshipPage from '@/pages/public/internship/Internship';
+import Membership from '@/pages/public/membership/Membership';
 
 interface AppRouteCustom {
   auth?: boolean;
@@ -70,6 +74,22 @@ export const publicRoutes: AppRoute[] = [
   {
     path: '/community',
     element: <CommunityPage />,
+  },
+  {
+    path: '/project',
+    element: <Project />,
+  },
+  {
+    path: '/webinar',
+    element: <Webinar />,
+  },
+  {
+    path: '/internship',
+    element: <InternshipPage />,
+  },
+  {
+    path: '/membership',
+    element: <Membership />,
   },
   {
     path: '/about-us',

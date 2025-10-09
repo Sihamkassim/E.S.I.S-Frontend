@@ -115,7 +115,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({ initial = empty, onSub
         />
       </div>
       <div>
-  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center justify-between">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center justify-between">
           <span>Additional Media (Images / Videos)</span>
           <span className="text-xs text-gray-400 dark:text-gray-500">You can select multiple</span>
         </label>

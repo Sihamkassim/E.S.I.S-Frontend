@@ -1,5 +1,6 @@
 import type { Project, ProjectMeta } from '@/types/projectTypes';
 import axios from 'axios';
+import { api } from './api';
 
 const API_BASE_USER = `${import.meta.env.VITE_API_BASE_URL}/user`;
 const API_BASE_PUBLIC = `${import.meta.env.VITE_API_BASE_URL}/public/projects`;
@@ -8,7 +9,7 @@ const USER_PROJECTS_BASE = `${import.meta.env.VITE_API_BASE_URL}/user/projects`;
 
 // User: create project with form-data (requires Bearer token)
 export async function createProjectForm(data: FormData, token: string, onProgress?: (pct: number) => void) {
-	const response = await axios.post(`${API_BASE_USER}/projects/form`, data, {
+	const response = await api.post(`/user/projects/form`, data, {
 		headers: {
 			'Content-Type': 'multipart/form-data',
 			Authorization: `Bearer ${token}`,
@@ -25,13 +26,13 @@ export async function createProjectForm(data: FormData, token: string, onProgres
 
 // User: get my projects
 export async function getMyProjects(token: string) {
-  const response = await axios.get<{ data: Project[] }>(`${API_BASE_USER}/projects/me`, {
-	headers: {
-	  'Content-Type': 'application/json',
-	  Authorization: `Bearer ${token}`,
-	},
-  });
-  return response.data;
+	const response = await api.get<{ data: Project[] }>(`/user/projects/me`, {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data;
 }
 
 // User: update existing project (JSON body)
@@ -110,7 +111,7 @@ export async function deleteProject(id: number, token: string) {
 }
 // Admin: get all projects
 export async function getAdminProjects(params: Record<string, any> = {}, token: string) {
-	const response = await axios.get<{ data: Project[]; meta?: ProjectMeta }>(`${ADMIN_API_BASE}`,
+	const response = await api.get<{ data: Project[]; meta?: ProjectMeta }>(`/admin/projects`,
 		{
 			params,
 			headers: {
@@ -141,15 +142,15 @@ export async function getAdminProjectBySlug(slug: string, token: string) {
 }
 
 export async function getAdminProjectById(id: number, token: string) {
-  const response = await axios.get<Project>(`${ADMIN_API_BASE}/${id}`, {
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-  });
-  return response.data;
+	const response = await axios.get<Project>(`${ADMIN_API_BASE}/${id}`, {
+		headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+	});
+	return response.data;
 }
 
 // Admin: approve / feature project (featured true -> FEATURED, false -> APPROVED)
 export async function approveProject(id: number, featured: boolean | undefined, token: string) {
-	return axios.post(`${ADMIN_API_BASE}/${id}/approve`, { featured }, {
+	return api.post(`/admin/projects/${id}/approve`, { featured }, {
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
@@ -193,6 +194,6 @@ export async function getProjects(params: GetProjectsParams = {}) {
 
 // Public: get project detail by slug (includes media & full info per backend include)
 export async function getProjectBySlug(slug: string) {
-    const response = await axios.get(`${API_BASE_PUBLIC}/${slug}`);
-    return response.data as Project & { media?: any[] };
+	const response = await axios.get(`${API_BASE_PUBLIC}/${slug}`);
+	return response.data as Project & { media?: any[] };
 }
