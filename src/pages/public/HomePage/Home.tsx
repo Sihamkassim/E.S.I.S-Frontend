@@ -95,7 +95,7 @@ export default function Home() {
                                     {item.name}
                                 </a>
                             ))}
-                            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
+                            <button onClick={() => navigate('/register')} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
                                 Sign Up
                             </button>
                         </nav>

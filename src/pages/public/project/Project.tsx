@@ -360,7 +360,7 @@ export default function Project() {
                                     {item.name}
                                 </a>
                             ))}
-                            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
+                            <button onClick={() => navigate('/register')} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
                                 Sign Up
                             </button>
                         </nav>
@@ -437,69 +437,71 @@ export default function Project() {
 
 
             {/* Projects Section */}
-            <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-                <div className="max-w-7xl mx-auto">
-                    <AnimatedSection className="text-center mb-12">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                            Explore Projects
-                        </h2>
-                        <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg">
-                            {projectsData?.meta?.total
-                                ? `Browse through ${projectsData.meta.total} innovative projects created by our talented community.`
-                                : 'Browse through innovative projects created by our talented community.'
-                            }
-                        </p>
-                    </AnimatedSection>
+            <AnimatedSection>
+                <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+                    <div className="max-w-7xl mx-auto">
+                        <AnimatedSection className="text-center mb-12">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                                Explore Projects
+                            </h2>
+                            <p className="text-gray-600 max-w-3xl mx-auto text-base sm:text-lg">
+                                {projectsData?.meta?.total
+                                    ? `Browse through ${projectsData.meta.total} innovative projects created by our talented community.`
+                                    : 'Browse through innovative projects created by our talented community.'
+                                }
+                            </p>
+                        </AnimatedSection>
 
-                    {loading && (
-                        <div className="flex items-center justify-center py-20">
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                                <p className="text-gray-600 font-medium">Loading projects...</p>
+                        {loading && (
+                            <div className="flex items-center justify-center py-20">
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                    <p className="text-gray-600 font-medium">Loading projects...</p>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-                            <p className="text-red-600 font-medium">{error}</p>
-                        </div>
-                    )}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+                                <p className="text-red-600 font-medium">{error}</p>
+                            </div>
+                        )}
 
-                    {!loading && !error && projectsData?.data && (
-                        <>
-                            <StaggeredContainer
-                                className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-                                staggerDelay={0.15}
-                            >
-                                {projectsData.data.map((project) => (
-                                    <ProjectCard
-                                        key={project.id}
-                                        project={project}
-                                        onClick={() => setSelectedProject(project)}
-                                    />
-                                ))}
-                            </StaggeredContainer>
+                        {!loading && !error && projectsData?.data && (
+                            <>
+                                <StaggeredContainer
+                                    className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                                    staggerDelay={0.15}
+                                >
+                                    {projectsData.data.map((project) => (
+                                        <ProjectCard
+                                            key={project.id}
+                                            project={project}
+                                            onClick={() => setSelectedProject(project)}
+                                        />
+                                    ))}
+                                </StaggeredContainer>
 
-                            {/* Pagination Info */}
-                            {projectsData.meta && (
-                                <AnimatedSection delay={0.5} className="text-center mt-12">
-                                    <p className="text-gray-500">
-                                        Showing {projectsData.data.length} of {projectsData.meta.total} projects
-                                    </p>
-                                </AnimatedSection>
-                            )}
-                        </>
-                    )}
+                                {/* Pagination Info */}
+                                {projectsData.meta && (
+                                    <AnimatedSection delay={0.5} className="text-center mt-12">
+                                        <p className="text-gray-500">
+                                            Showing {projectsData.data.length} of {projectsData.meta.total} projects
+                                        </p>
+                                    </AnimatedSection>
+                                )}
+                            </>
+                        )}
 
-                    {!loading && !error && (!projectsData?.data || projectsData.data.length === 0) && (
-                        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-12 text-center">
-                            <p className="text-gray-600 text-lg font-medium">No projects found</p>
-                            <p className="text-gray-500 mt-2">Check back soon for new projects!</p>
-                        </div>
-                    )}
-                </div>
-            </section>
+                        {!loading && !error && (!projectsData?.data || projectsData.data.length === 0) && (
+                            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-12 text-center">
+                                <p className="text-gray-600 text-lg font-medium">No projects found</p>
+                                <p className="text-gray-500 mt-2">Check back soon for new projects!</p>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            </AnimatedSection>
 
             <Footer />
             {/* Project Modal */}

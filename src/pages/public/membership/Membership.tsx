@@ -33,13 +33,13 @@ interface NavItem {
 }
 
 const MembershipPage: React.FC = () => {
+    const navigate = useNavigate();
     const [scrolled, setScrolled] = useState<boolean>(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -198,7 +198,7 @@ const MembershipPage: React.FC = () => {
                         ))}
                     </nav>
 
-                    <button className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg">
+                    <button onClick={() => navigate('/register')} className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg">
                         Sign Up
                     </button>
 
@@ -223,7 +223,7 @@ const MembershipPage: React.FC = () => {
                                     {item.name}
                                 </a>
                             ))}
-                            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full shadow-md">
+                            <button onClick={() => navigate('/register')} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full shadow-md">
                                 Sign Up
                             </button>
                         </nav>
@@ -567,7 +567,7 @@ const MembershipPage: React.FC = () => {
                                         <button
                                             onClick={() => {
                                                 setModalOpen(false);
-                                                handleSubscribe(selectedPlan);
+                                                navigate('/register')
                                             }}
                                             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-medium shadow-lg flex items-center"
                                         >

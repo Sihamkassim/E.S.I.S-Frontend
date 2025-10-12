@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Users, Menu, X, MessageCircle, Calendar, Award, BookOpen, Lightbulb, Target, TrendingUp, Globe, Heart, Share2, UserPlus } from 'lucide-react';
 import { AnimatedSection, StaggeredContainer } from '../HomePage/components/AnimatedComponents';
 import Footer from '../HomePage/components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function CommunityPage() {
+    const navigate = useNavigate()
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
@@ -123,7 +125,7 @@ export default function CommunityPage() {
                         ))}
                     </nav>
 
-                    <button className="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    <button onClick={() => navigate('/register')} className="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                         Sign Up
                     </button>
 
@@ -148,7 +150,7 @@ export default function CommunityPage() {
                                     {item.name}
                                 </a>
                             ))}
-                            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
+                            <button onClick={() => navigate('/register')} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium mt-2 w-full">
                                 Sign Up
                             </button>
                         </nav>
@@ -312,7 +314,7 @@ export default function CommunityPage() {
 
             {/* CTA Section */}
             <AnimatedSection>
-                <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-purple-600 relative overflow-hidden mx-20 my-20 rounded-3xl">
+                <section className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden mx-4 sm:mx-8 lg:mx-20 my-20 rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600">
                     <div className="absolute top-0 left-0 w-full h-full opacity-10">
                         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
                         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>

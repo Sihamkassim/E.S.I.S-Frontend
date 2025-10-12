@@ -202,7 +202,7 @@ const InternshipPage: React.FC = () => {
             ))}
           </nav>
 
-          <button className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg">
+          <button onClick={() => navigate('/register')} className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg">
             Sign Up
           </button>
 
@@ -451,7 +451,7 @@ const InternshipPage: React.FC = () => {
                       {/* Action Buttons */}
                       <div className="flex space-x-3">
                         <button
-                          onClick={(e) => handleApplyClick(internship, e)}
+                          onClick={(e) => navigate('/register')}
                           className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center justify-center"
                         >
                           Apply Now
@@ -585,10 +585,8 @@ const InternshipPage: React.FC = () => {
                       Close
                     </button>
                     <button
-                      onClick={() => {
-                        setModalOpen(false);
-                        navigate(`/internships/${selectedInternship.id}/apply`);
-                      }}
+                      onClick={(e) => navigate('/register')}
+
                       className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-medium shadow-lg flex items-center"
                     >
                       Apply Now
